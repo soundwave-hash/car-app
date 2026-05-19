@@ -290,6 +290,50 @@
     </div>
   </div>
 
+  <!-- MESSAGES OVERLAY -->
+  <div id="msgOverlay" style="display:none;position:absolute;inset:0;z-index:40;background:rgba(0,0,0,.42);align-items:flex-end" onclick="if(event.target===this)closeMsgOverlay()">
+    <div style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:82%;display:flex;flex-direction:column">
+      <div style="width:32px;height:3px;background:#e0e0e0;border-radius:2px;margin:14px auto 0;flex-shrink:0"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 18px 10px;flex-shrink:0;border-bottom:1px solid #f2f2f2">
+        <span style="font-family:var(--serif);font-weight:800;font-size:18px;color:#1a1a1a">Messages</span>
+        <div onclick="closeMsgOverlay()" style="width:26px;height:26px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:#777;line-height:1;font-family:var(--sans)">×</div>
+      </div>
+      <div style="overflow-y:auto;flex:1;padding:10px 0">
+        <div onclick="closeMsgOverlay()" style="display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-bottom:1px solid #f7f7f7" onmouseenter="this.style.background='#fafafa'" onmouseleave="this.style.background=''">
+          <div style="width:42px;height:42px;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:700;color:#fff">DA</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
+              <span style="font-size:13px;font-weight:700;color:#1a1a1a">Dealer A — Toyota</span>
+              <span style="font-size:10px;color:#bbb;flex-shrink:0;margin-left:8px">2m ago</span>
+            </div>
+            <div style="font-size:12px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">The RAV4 Hybrid you inquired about is still available. We can schedule a test drive this weekend.</div>
+          </div>
+          <div style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;flex-shrink:0"></div>
+        </div>
+        <div onclick="closeMsgOverlay()" style="display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;border-bottom:1px solid #f7f7f7" onmouseenter="this.style.background='#fafafa'" onmouseleave="this.style.background=''">
+          <div style="width:42px;height:42px;border-radius:50%;background:#3a3a3a;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:700;color:#fff">HB</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
+              <span style="font-size:13px;font-weight:700;color:#1a1a1a">Honda of Burbank</span>
+              <span style="font-size:10px;color:#bbb;flex-shrink:0;margin-left:8px">1h ago</span>
+            </div>
+            <div style="font-size:12px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">We have 3 CR-V Hybrids in stock. Current APR offer ends Sunday.</div>
+          </div>
+        </div>
+        <div onclick="closeMsgOverlay()" style="display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer" onmouseenter="this.style.background='#fafafa'" onmouseleave="this.style.background=''">
+          <div style="width:42px;height:42px;border-radius:50%;background:#555;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:700;color:#fff">MS</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
+              <span style="font-size:13px;font-weight:700;color:#1a1a1a">Mazda South Bay</span>
+              <span style="font-size:10px;color:#bbb;flex-shrink:0;margin-left:8px">Yesterday</span>
+            </div>
+            <div style="font-size:12px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Thanks for stopping by! Here is the quote we discussed for the CX-5.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- TRACK -->
   <div style="flex:1;min-height:0;overflow:hidden;position:relative">
   <div id="track" style="display:flex;height:100%;transition:transform .36s cubic-bezier(.4,0,.2,1);will-change:transform;width:3840px">
@@ -863,7 +907,7 @@ var FOOTER_ITEMS=[
   {svg:MIC_SVG,lbl:'Voice',screens:[7,8,9],fn:function(){nav(7);}},
   {svg:START_SVG,lbl:'Search',screens:[0,2,3,4,5,6,10,11],fn:function(){nav(0);}},
   {svg:SAVE_SVG,lbl:'Saved',screens:[1],fn:function(){nav(1);}},
-  {svg:'<div style="position:relative;width:20px;height:20px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="#1a1a1a" stroke="none"/><circle cx="12" cy="10" r="1" fill="#1a1a1a" stroke="none"/><circle cx="15" cy="10" r="1" fill="#1a1a1a" stroke="none"/></svg><div style="position:absolute;top:-3px;right:-4px;width:8px;height:8px;border-radius:50%;background:#e02020;border:1.5px solid #fff"></div></div>',lbl:'Messages',screens:[],fn:function(){}}
+  {svg:'<div style="position:relative;width:20px;height:20px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="#1a1a1a" stroke="none"/><circle cx="12" cy="10" r="1" fill="#1a1a1a" stroke="none"/><circle cx="15" cy="10" r="1" fill="#1a1a1a" stroke="none"/></svg><div style="position:absolute;top:-3px;right:-4px;width:8px;height:8px;border-radius:50%;background:#e02020;border:1.5px solid #fff"></div></div>',lbl:'Messages',screens:[],fn:function(){openMsgOverlay();}}
 ];
 
 function mkFooter(){
@@ -920,6 +964,8 @@ var nav=function(idx){navBase(idx);if(idx===10)buildInventory();if(idx===11)s11I
 // ── OVERLAY HELPERS ──────────────────────────────────────────────────────────
 function openOv(id){var el=document.getElementById(id);el.style.display='flex';el.style.opacity='0';el.style.transition='opacity .22s ease';setTimeout(function(){el.style.opacity='1';},10);}
 function closeOv(id){var el=document.getElementById(id);el.style.opacity='0';setTimeout(function(){el.style.display='none';el.style.opacity='';el.style.transition='';},240);}
+function openMsgOverlay(){var el=document.getElementById('msgOverlay');el.style.display='flex';el.style.opacity='0';el.style.transition='opacity .22s ease';setTimeout(function(){el.style.opacity='1';},10);}
+function closeMsgOverlay(){var el=document.getElementById('msgOverlay');el.style.opacity='0';setTimeout(function(){el.style.display='none';el.style.opacity='';el.style.transition='';},240);}
 
 // ── PILL SHEET ────────────────────────────────────────────────────────────────
 var editingStep=null,sheetClosing=false;
