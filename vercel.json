@@ -1,7 +1,4 @@
 {
-  "buildCommand": null,
-  "outputDirectory": ".",
-  "framework": null,
   "rewrites": [
     { "source": "/", "destination": "/car_app_v4.html" }
   ]
