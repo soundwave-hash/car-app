@@ -513,9 +513,23 @@
       <div style="padding:11px 18px 13px;flex-shrink:0">
         <div class="eyebrow" style="margin-bottom:7px">Finder</div>
         <div style="font-family:var(--serif);font-weight:800;font-size:24px;color:#1a1a1a;line-height:1.12;margin-bottom:5px">What are you looking for?</div>
-        <div style="font-size:12px;color:#aaa;line-height:1.6">Select a make and model, then choose a year.</div>
+        <div style="font-size:12px;color:#aaa;line-height:1.6">Select a year, make, and model.</div>
       </div>
       <div style="flex:1;min-height:0;padding:0 16px;display:flex;flex-direction:column;gap:8px;overflow:hidden">
+        <div class="facc" style="flex:1" id="fc-year">
+          <div style="flex:1;display:flex;align-items:center;padding:0 22px;cursor:pointer" id="fcc-year" onclick="fgo('year')">
+            <div class="facc-label" id="flbl-year">Year</div>
+          </div>
+          <div style="display:none;flex-direction:column;height:100%;overflow:hidden" id="fce-year">
+            <div style="padding:13px 18px 10px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="fgo('year')">
+              <span class="eyebrow">Year</span>
+              <button onclick="fdone(event,'year')" class="facc-chip">Done</button>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:0 16px 13px">
+              <div style="display:flex;flex-wrap:wrap;gap:6px" id="fwrap-year"></div>
+            </div>
+          </div>
+        </div>
         <div class="facc" style="flex:1" id="fc-make">
           <div style="flex:1;display:flex;align-items:center;padding:0 22px;cursor:pointer" id="fcc-make" onclick="fgo('make')">
             <div class="facc-label" id="flbl-make">Make</div>
@@ -544,23 +558,9 @@
             </div>
           </div>
         </div>
-        <div class="facc" style="flex:1" id="fc-year">
-          <div style="flex:1;display:flex;align-items:center;padding:0 22px;cursor:pointer" id="fcc-year" onclick="fgo('year')">
-            <div class="facc-label" id="flbl-year">Year</div>
-          </div>
-          <div style="display:none;flex-direction:column;height:100%;overflow:hidden" id="fce-year">
-            <div style="padding:13px 18px 10px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="fgo('year')">
-              <span class="eyebrow">Year</span>
-              <button onclick="fdone(event,'year')" class="facc-chip">Done</button>
-            </div>
-            <div style="flex:1;overflow-y:auto;padding:0 16px 13px">
-              <div style="display:flex;flex-wrap:wrap;gap:6px" id="fwrap-year"></div>
-            </div>
-          </div>
-        </div>
       </div>
       <div style="padding:11px 16px 11px;flex-shrink:0;background:#fff">
-        <button id="fcta" disabled onclick="finderSearch()" class="cta-btn dim-btn" style="font-size:12.5px">Select make and model first</button>
+        <button id="fcta" disabled onclick="finderSearch()" class="cta-btn dim-btn" style="font-size:12.5px">Select a year first</button>
       </div>
       <div id="f5"></div>
     </div>
@@ -1454,24 +1454,24 @@ var fOpen=null;
 // Selecting model resets year.
 
 function fIsUnlocked(key){
-  if(key==='make')return true;
-  if(key==='model')return !!fSel.make;
-  if(key==='year')return !!(fSel.make&&fSel.model);
+  if(key==='year')return true;
+  if(key==='make')return !!fSel.year;
+  if(key==='model')return !!(fSel.year&&fSel.make);
   return false;
 }
 
 function fgo(key){
   if(!fIsUnlocked(key))return; // hard gate — ignore taps on locked steps
   var isOpen=fOpen===key;
-  ['make','model','year'].forEach(function(k){
+  ['year','make','model'].forEach(function(k){
     var cc=document.getElementById('fcc-'+k);
     var ce=document.getElementById('fce-'+k);
     var fc=document.getElementById('fc-'+k);
     if(k===key&&!isOpen){
       cc.style.display='none';ce.style.display='flex';fc.style.flex='2.5';
-      if(k==='make')buildFWrap('make',MAKES);
+      if(k==='year')buildFWrap('year',YEARS);
+      else if(k==='make')buildFWrap('make',MAKES);
       else if(k==='model')buildFWrap('model',MODELS_MAP[fSel.make]||[]);
-      else if(k==='year')buildFWrap('year',YEARS);
       fOpen=key;
     } else {
       cc.style.display='flex';ce.style.display='none';fc.style.flex='1';
@@ -1490,8 +1490,8 @@ function buildFWrap(key,items){
     btn.textContent=item;
     btn.onclick=function(){
       fSel[key]=item;
-      if(key==='make'){fSel.model=null;fSel.year=null;}
-      if(key==='model'){fSel.year=null;}
+      if(key==='year'){fSel.make=null;fSel.model=null;}
+      if(key==='make'){fSel.model=null;}
       buildFWrap(key,items);
       updateFinderLabels();
       updateFinderCta();
@@ -1502,7 +1502,7 @@ function buildFWrap(key,items){
 }
 
 function syncFinderLockState(){
-  var STEPS_F=['make','model','year'];
+  var STEPS_F=['year','make','model'];
   STEPS_F.forEach(function(k){
     var fc=document.getElementById('fc-'+k);
     var cc=document.getElementById('fcc-'+k);
@@ -1512,9 +1512,8 @@ function syncFinderLockState(){
       fc.style.opacity=unlocked?'1':'0.38';
       fc.style.pointerEvents=unlocked?'auto':'none';
     }
-    // Show a "locked" hint on label when step is locked and empty
     if(lbl&&!fSel[k]){
-      var hint=k==='model'?'Select make first':k==='year'?'Select model first':'';
+      var hint=k==='make'?'Select year first':k==='model'?'Select make first':'';
       if(!unlocked&&hint){
         lbl.style.fontSize='16px';
         lbl.style.color='#bbb';
@@ -1552,7 +1551,7 @@ function updateFinderCta(){
   } else {
     btn.disabled=true;btn.classList.add('dim-btn');
     btn.style.background='#ebebeb';btn.style.color='#ccc';btn.style.cursor='default';
-    btn.textContent=fSel.make&&fSel.model?'Select a year':fSel.make?'Select a model':'Select make and model first';
+    btn.textContent=fSel.year&&fSel.make?'Select a model':fSel.year?'Select a make':'Select a year first';
   }
 }
 
