@@ -1501,18 +1501,18 @@ function updateFinderLabels(){
 
 function updateFinderCta(){
   var btn=document.getElementById('fcta');if(!btn)return;
-  if(fSel.make&&fSel.model){
+  if(fSel.make&&fSel.model&&fSel.year){
     btn.disabled=false;btn.classList.remove('dim-btn');
     btn.style.background='#1a1a1a';btn.style.color='#fff';btn.style.cursor='pointer';
-    btn.textContent=fSel.year?'Search '+fSel.year+' '+fSel.make+' '+fSel.model:'Search '+fSel.make+' '+fSel.model+' — all years';
+    btn.textContent='Search '+fSel.year+' '+fSel.make+' '+fSel.model;
   } else {
     btn.disabled=true;btn.classList.add('dim-btn');
     btn.style.background='#ebebeb';btn.style.color='#ccc';btn.style.cursor='default';
-    btn.textContent=fSel.make?'Select a model':'Select a make first';
+    btn.textContent=fSel.make&&fSel.model?'Select a year':fSel.make?'Select a model':'Select make and model first';
   }
 }
 
-function finderSearch(){if(fSel.make&&fSel.model){prevScr=5;buildVoiceGrid();nav(10);}}
+function finderSearch(){if(fSel.make&&fSel.model&&fSel.year){prevScr=5;buildVoiceGrid();nav(10);}}
 
 // Init lock state on load
 syncFinderLockState();
