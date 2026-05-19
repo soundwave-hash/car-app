@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automatic — Car Buying App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0;padding:0;background:#f0f0f0;font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif">
+
+<style>
+:root {
+  --black: #1a1a1a;
+  --white: #ffffff;
+  --grey-bg: #f2f2f2;
+  --grey-light: #f7f7f7;
+  --grey-border: #e8e8e8;
+  --grey-mid: #d0d0d0;
+  --grey-text: #999;
+  --grey-muted: #bbb;
+  --grey-subtle: #777;
+  --serif: 'Syne', sans-serif;
+  --sans: 'DM Sans', -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+@keyframes vpr1 { 0%{transform:scale(1);opacity:.18} 50%{transform:scale(1.7);opacity:.06} 100%{transform:scale(1);opacity:.18} }
+@keyframes vpr2 { 0%{transform:scale(1);opacity:.11} 50%{transform:scale(2.3);opacity:.03} 100%{transform:scale(1);opacity:.11} }
+@keyframes vdb  { 0%,80%,100%{transform:translateY(0);opacity:.35} 40%{transform:translateY(-5px);opacity:1} }
+@keyframes fadeSlide { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+.vrr1{animation:vpr1 1.8s ease-in-out infinite}
+.vrr2{animation:vpr2 1.8s ease-in-out infinite .3s}
+.vdd1{animation:vdb 1.3s ease-in-out infinite 0s}
+.vdd2{animation:vdb 1.3s ease-in-out infinite .22s}
+.vdd3{animation:vdb 1.3s ease-in-out infinite .44s}
+
+/* ── PHONE FRAME ── */
+.phone-shell {
+  width:320px; height:660px;
+  border-radius:48px;
+  box-shadow: 0 0 0 9px #1a1a1a, 0 0 0 11px #2a2a2a, 0 0 0 14px #1a1a1a, 0 24px 80px rgba(0,0,0,.28);
+  display:flex; flex-direction:column;
+  background:#fff; overflow:hidden;
+  flex-shrink:0; position:relative;
+}
+
+/* ── SCREEN TRACK ── */
+#track { display:flex; height:100%; transition:transform .36s cubic-bezier(.4,0,.2,1); will-change:transform; width:3520px; }
+.screen { width:320px; height:100%; flex-shrink:0; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ── BACK BUTTON ── */
+.bb {
+  width:32px; height:32px; border-radius:50%;
+  border:1.5px solid var(--grey-border); background:#fff;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+  transition: background .15s, border-color .15s;
+}
+.bb:hover { background: var(--grey-light); }
+
+/* ── SECTION LABELS ── */
+.eyebrow {
+  font-size:11px; font-weight:600; letter-spacing:.10em;
+  text-transform:uppercase; color:var(--grey-muted);
+}
+
+/* ── PILL CHIP ── */
+.chip {
+  background:#fff; border:1px solid var(--grey-border);
+  border-radius:20px; padding:4px 10px;
+  font-size:11px; font-weight:500; color:#555;
+  display:flex; align-items:center; gap:4px;
+  cursor:pointer; font-family:var(--sans);
+  white-space:nowrap;
+  transition: background .12s;
+}
+.chip:hover { background: var(--grey-light); }
+
+/* ── CARD BASE ── */
+.card {
+  background:#fff; border-radius:14px; overflow:hidden;
+}
+
+/* ── VEHICLE GRID CARD ── */
+.vcard {
+  background:#fff; border:2px solid transparent;
+  border-radius:12px; cursor:pointer;
+  transition: border-color .15s, box-shadow .15s;
+  overflow:hidden;
+}
+.vcard:hover { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+.vcard.sel { border-color:#1a1a1a; }
+.vcard.dim { opacity:0.3; pointer-events:none; }
+
+/* ── TAG ── */
+.tag {
+  display:inline-flex; align-items:center;
+  background:var(--black); color:#fff;
+  font-size:11px; font-weight:600;
+  padding:3px 8px; border-radius:20px;
+  letter-spacing:.02em;
+}
+.tag.grey { background:var(--grey-border); color:#888; }
+
+/* ── FOOTER ── */
+.footer-bar {
+  display:flex; border-top:1px solid #ededee;
+  background:#fff; flex-shrink:0; padding:0 0 10px;
+}
+.footer-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  gap:3px; padding:9px 0 0; border:none; background:none;
+  cursor:pointer; font-family:var(--sans);
+  transition: opacity .15s;
+}
+.footer-btn:hover { opacity:.65; }
+.footer-btn span { font-size:11px; font-weight:500; color:var(--black); }
+
+/* ── STAT PILL ── */
+.stat-row { display:flex; justify-content:space-between; align-items:center; }
+.stat-row .sk { font-size:11px; color:var(--grey-muted); text-transform:uppercase; letter-spacing:.05em; }
+.stat-row .sv { font-size:11px; font-weight:600; color:#555; }
+
+/* ── CTA BUTTON ── */
+.cta-btn {
+  width:100%; padding:13px; background:var(--black); color:#fff;
+  border:none; border-radius:12px; font-size:13px; font-weight:600;
+  cursor:pointer; font-family:var(--sans); line-height:1.3;
+  transition: opacity .15s;
+}
+.cta-btn:hover { opacity:.85; }
+.cta-btn:disabled, .cta-btn.dim-btn { background:#ebebeb; color:#ccc; cursor:default; }
+
+/* ── PROGRESS BAR ── */
+.prog-bar-wrap { display:flex; gap:3px; }
+.prog-bar-seg { flex:1; height:2.5px; border-radius:2px; background:#ebebeb; transition:background .2s; }
+.prog-bar-seg.done { background:var(--black); }
+
+/* ── OPTION ROW ── */
+.opt-row {
+  padding:11px 13px; border:1.5px solid var(--grey-border);
+  border-radius:11px; cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between;
+  background:#fff;
+  transition: border-color .15s, background .15s;
+}
+.opt-row:hover { border-color:#bbb; background: #fafafa; }
+.opt-row.sel { border-color:var(--black); background:var(--black); }
+.opt-row.sel .ot { color:#fff; }
+.opt-row.sel .os { color:#888; }
+.opt-row .ot { font-size:13px; font-weight:500; color:var(--black); margin-bottom:1px; }
+.opt-row .os { font-size:10px; color:#aaa; }
+.opt-check {
+  width:19px; height:19px; border-radius:50%;
+  border:1.5px solid #ddd; display:flex;
+  align-items:center; justify-content:center;
+  flex-shrink:0; background:transparent;
+}
+.opt-row.sel .opt-check { background:#fff; border-color:#fff; }
+
+/* ── COMPARISON TABS ── */
+.cmp-tab {
+  flex:1; padding:7px 0; font-size:11px; font-weight:600;
+  border:none; cursor:pointer; font-family:var(--sans);
+  transition: background .15s, color .15s;
+}
+
+/* ── OVERLAY ── */
+.overlay {
+  background:rgba(0,0,0,.42); display:none;
+  align-items:flex-end; position:absolute; inset:0; z-index:20;
+}
+.sheet {
+  background:#fff; border-radius:20px 20px 0 0;
+  padding:16px 18px 24px; width:100%;
+}
+.sheet-handle {
+  width:32px; height:3px; background:#e0e0e0;
+  border-radius:2px; margin:0 auto 14px;
+}
+
+/* ── INVENTORY CARD ── */
+.inv-card {
+  background:#fff; border-radius:10px; overflow:hidden;
+}
+
+/* ── SAVED LIST SECTIONS ── */
+.sv-section-label {
+  font-size:11px; font-weight:700; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--grey-muted);
+  padding:14px 16px 7px; background:var(--grey-bg);
+}
+
+/* ── FINDER ACCORDION ── */
+.facc {
+  border-radius:16px; overflow:hidden;
+  display:flex; flex-direction:column;
+  transition:flex .38s cubic-bezier(.4,0,.2,1);
+  background:#ebebeb;
+}
+.facc-label {
+  font-size:44px; font-weight:800; letter-spacing:-.04em;
+  line-height:1; color:var(--black);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:96%;
+  font-family:var(--sans);
+}
+.facc-chip {
+  padding:6px 14px; border-radius:20px; font-size:11px;
+  font-weight:600; font-family:var(--sans); cursor:pointer;
+  border:none; background:var(--black); color:#fff;
+  transition: opacity .15s;
+}
+.facc-chip:hover { opacity:.82; }
+
+/* ── REL BAR ── */
+.rel-bar-track { width:100%; height:4px; background:#f0f0f0; border-radius:2px; overflow:hidden; }
+.rel-bar-fill { height:100%; background:var(--black); border-radius:2px; width:0; transition:width .65s cubic-bezier(.4,0,.2,1); }
+
+/* ── COST ROW ── */
+.cost-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:6px 0; border-bottom:1px solid #eee;
+}
+.cost-row .ck { font-size:11px; color:#777; }
+.cost-row .cv { font-size:11px; font-weight:600; color:var(--black); }
+
+/* ── SPEC TILE ── */
+.spec-tile {
+  background:var(--grey-light); border-radius:9px; padding:9px 11px;
+}
+.spec-tile .sl { font-size:11px; font-weight:500; letter-spacing:.06em; text-transform:uppercase; color:var(--grey-muted); margin-bottom:3px; }
+.spec-tile .sv { font-size:12px; font-weight:700; color:var(--black); }
+
+/* ── VOICE DOTS ── */
+.voice-dot-row { display:flex; align-items:flex-end; gap:5px; height:24px; }
+.voice-dot { width:4px; border-radius:2px; background:var(--black); }
+
+/* ── SCROLL TWEAKS ── */
+::-webkit-scrollbar { display:none; }
+* { scrollbar-width:none; }
+
+/* ── SHEET ENTER/EXIT ── */
+@keyframes sheetIn  { from{transform:translateY(100%)} to{transform:translateY(0)} }
+@keyframes sheetOut { from{transform:translateY(0)} to{transform:translateY(100%)} }
+
+/* ── SAFETY BADGE ── */
+.safety-badge {
+  background:var(--black); color:#fff; font-size:10px;
+  font-weight:600; padding:4px 11px; border-radius:20px;
+}
+
+/* ── COMPARISON STAT BAR ── */
+.spot-bar-track { width:100%; height:3px; background:#f0f0f0; border-radius:2px; overflow:hidden; margin-bottom:4px; }
+.spot-bar-fill { height:100%; border-radius:2px; width:0; transition:width .6s ease; }
+
+/* ── TOAST ── */
+.toast {
+  position:absolute; bottom:80px; left:50%; transform:translateX(-50%);
+  background:var(--black); color:#fff; font-size:10px; font-weight:600;
+  padding:7px 14px; border-radius:20px; white-space:nowrap;
+  opacity:1; transition:opacity .4s; z-index:40; pointer-events:none;
+  font-family:var(--sans);
+}
+
+/* ── VOICE BUBBLE ── */
+.vbubble {
+  max-width:80%; padding:10px 13px; border-radius:14px;
+  font-size:12px; line-height:1.6; font-family:var(--sans);
+}
+.vbubble.user { background:var(--black); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+.vbubble.ai   { background:var(--grey-light); color:var(--black); align-self:flex-start; border-bottom-left-radius:4px; }
+</style>
+
+<div style="display:flex;justify-content:center;align-items:center;min-height:900px;background:#f0f0f0;padding:2.5rem 0;font-family:var(--sans)">
+<div class="phone-shell">
+
+  <!-- Notch + Status -->
+  <div style="height:27px;display:flex;justify-content:center;align-items:flex-end;flex-shrink:0;background:#fff" id="nb">
+    <div style="width:102px;height:22px;background:#1a1a1a;border-radius:0 0 18px 18px"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 22px 0;flex-shrink:0;background:#fff" id="sb">
+    <span style="font-size:12.5px;font-weight:600;color:#1a1a1a;letter-spacing:-.01em">9:41</span>
+    <div style="display:flex;gap:5px;align-items:center">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#1a1a1a"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.237 4.237 0 00-6 0zm-4-4l2 2a7.074 7.074 0 0110 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#1a1a1a"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33C16.4 22 17 21.4 17 20.67V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+    </div>
+  </div>
+
+  <!-- TRACK -->
+  <div style="flex:1;min-height:0;overflow:hidden;position:relative">
+  <div id="track" style="display:flex;height:100%;transition:transform .36s cubic-bezier(.4,0,.2,1);will-change:transform;width:3840px">
+
+    <!-- ━━━━━━━━ S0: ONBOARDING ━━━━━━━━ -->
+    <div class="screen" style="background:#fff">
+      <!-- Top half: guided -->
+      <div onclick="nav(2)" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between;padding:28px 22px 28px;background:#fff;border-bottom:1px solid #ececec;cursor:pointer;position:relative;overflow:hidden">
+        <!-- subtle texture lines -->
+        <svg style="position:absolute;bottom:0;right:0;opacity:.04" width="140" height="140" viewBox="0 0 140 140"><circle cx="140" cy="140" r="70" fill="none" stroke="#000" stroke-width="28"/><circle cx="140" cy="140" r="38" fill="none" stroke="#000" stroke-width="28"/></svg>
+        <div>
+          <div class="eyebrow" style="margin-bottom:9px">Guided</div>
+          <div style="font-family:var(--serif);font-weight:800;font-size:26px;color:#1a1a1a;line-height:1.12;margin-bottom:9px">Help me find the right vehicle.</div>
+          <div style="font-size:12.5px;line-height:1.65;color:#888">I know my budget and needs, but I'm not sure which vehicle fits my life.</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+          <span style="font-size:11px;font-weight:500;color:#bbb;letter-spacing:.01em">Answer a few questions</span>
+          <div style="width:36px;height:36px;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+          </div>
+        </div>
+      </div>
+      <!-- Bottom half: direct -->
+      <div onclick="nav(5)" style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between;padding:28px 22px 28px;background:#1a1a1a;cursor:pointer;position:relative;overflow:hidden">
+        <svg style="position:absolute;bottom:0;right:0;opacity:.07" width="140" height="140" viewBox="0 0 140 140"><circle cx="140" cy="140" r="70" fill="none" stroke="#fff" stroke-width="28"/><circle cx="140" cy="140" r="38" fill="none" stroke="#fff" stroke-width="28"/></svg>
+        <div>
+          <div class="eyebrow" style="color:#555;margin-bottom:9px">Direct</div>
+          <div style="font-family:var(--serif);font-weight:800;font-size:26px;color:#fff;line-height:1.12;margin-bottom:9px">I know exactly what I want.</div>
+          <div style="font-size:12.5px;line-height:1.65;color:#666">I have a specific make, model, or year in mind. Help me find it.</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+          <span style="font-size:11px;font-weight:500;color:#555;letter-spacing:.01em">Search inventory</span>
+          <div style="width:36px;height:36px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="#1a1a1a"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+          </div>
+        </div>
+      </div>
+      <div id="f0"></div>
+    </div>
+
+    <!-- ━━━━━━━━ S1: SAVED ━━━━━━━━ -->
+    <div class="screen" style="background:var(--grey-bg);position:relative">
+      <div style="background:#fff;padding:13px 18px 13px;flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:11px">
+          <div class="bb" id="bb1"></div>
+          <div>
+            <div style="font-family:var(--serif);font-weight:800;font-size:24px;color:#1a1a1a;line-height:1.1">Saved</div>
+            <div style="font-size:11.5px;color:var(--grey-muted);line-height:1.5;margin-top:1px" id="svSubtitle">7 items across all categories</div>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;min-height:0" id="svList"></div>
+      <div id="f1"></div>
+      <!-- Delete overlay -->
+      <div class="overlay" id="delOverlay" onclick="if(event.target===this)closeOv('delOverlay')">
+        <div class="sheet">
+          <div class="sheet-handle"></div>
+          <div style="font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:3px">Remove this item?</div>
+          <div style="font-size:12px;color:#aaa;margin-bottom:13px;line-height:1.5">This will permanently remove it from your saved items.</div>
+          <div style="display:flex;gap:8px">
+            <button onclick="closeOv('delOverlay')" style="flex:1;padding:12px;background:var(--grey-light);color:#1a1a1a;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)">Cancel</button>
+            <button onclick="confirmDel()" style="flex:1;padding:12px;background:var(--grey-light);color:#cc3333;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ━━━━━━━━ S2: QUESTIONS ━━━━━━━━ -->
+    <div class="screen" style="background:#fff">
+      <div style="padding:13px 18px 0;flex-shrink:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:11px">
+          <div class="bb" id="bb2"></div>
+          <span class="eyebrow" id="qsl">1 of 7</span>
+          <div style="width:32px"></div>
+        </div>
+        <div class="prog-bar-wrap" id="qprog"></div>
+      </div>
+      <div style="flex:1;overflow-y:auto;min-height:0" id="qscroll">
+        <div style="padding:18px 18px 0">
+          <div class="eyebrow" style="margin-bottom:8px" id="qcat"></div>
+          <div style="font-family:var(--serif);font-weight:800;font-size:20px;color:#1a1a1a;line-height:1.2;margin-bottom:5px" id="qtext"></div>
+          <div style="font-size:12px;color:#aaa;line-height:1.65;margin-bottom:15px" id="qsub"></div>
+          <div style="display:flex;flex-direction:column;gap:7px;padding-bottom:16px" id="qopts"></div>
+        </div>
+      </div>
+      <div style="padding:10px 18px 11px;border-top:1px solid #f0f0f0;flex-shrink:0">
+        <button id="qbtn" disabled onclick="qNext()" class="cta-btn dim-btn">Continue</button>
+      </div>
+      <div id="f2"></div>
+    </div>
+
+    <!-- ━━━━━━━━ S3: RESULTS ━━━━━━━━ -->
+    <div class="screen" style="background:var(--grey-bg);position:relative" id="s3wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px 8px;flex-shrink:0;background:var(--grey-bg)">
+        <div class="bb" id="bb3" style="border-color:#ddd"></div>
+        <div id="rsavebtn" onclick="toggleSave()" style="display:flex;align-items:center;gap:6px;padding:5px 13px;border:1.5px solid var(--grey-border);border-radius:20px;cursor:pointer;background:#fff;transition:background .15s,border-color .15s">
+          <svg id="rsaveico" width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="rsavelbl" style="font-size:11px;font-weight:600;color:#1a1a1a">Save</span>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;min-height:0" id="rscrollarea">
+        <div style="padding:0 16px 10px;background:var(--grey-bg)">
+          <div id="rtitle" style="font-family:var(--serif);font-weight:800;font-size:22px;color:#1a1a1a;margin-bottom:3px">Your matches.</div>
+          <div style="font-size:11px;color:var(--grey-muted);margin-bottom:10px" id="rmatch">14 vehicles matched, ranked by reliability.</div>
+          <div class="eyebrow" style="margin-bottom:6px">Tap a filter to edit</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px" id="rpills"></div>
+        </div>
+        <div class="eyebrow" style="padding:8px 16px 7px">Best matches</div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:0 16px 12px" id="rgrid"></div>
+      </div>
+      <div style="background:#fff;border-top:1px solid #eeeeee;padding:9px 16px 10px;flex-shrink:0">
+        <div style="font-size:10px;font-weight:500;color:var(--grey-muted);margin-bottom:6px"><span id="rselcount" style="color:#1a1a1a;font-weight:700">0</span> of 4 selected to compare</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;min-height:14px" id="rchips"></div>
+        <button id="rcta" onclick="goCompare()" class="cta-btn dim-btn">Compare vehicles</button>
+      </div>
+      <div id="f3"></div>
+      <!-- Save overlay -->
+      <div class="overlay" id="saveOv" onclick="if(event.target===this)closeOv('saveOv')">
+        <div class="sheet">
+          <div class="sheet-handle"></div>
+          <div style="font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:3px">Name this search</div>
+          <div style="font-size:12px;color:#aaa;margin-bottom:13px">Give this set of results a name.</div>
+          <input id="saveinp" type="text" placeholder="e.g. Family SUV search" maxlength="40"
+            oninput="document.getElementById('saveok').disabled=!this.value.trim()"
+            style="width:100%;padding:11px 13px;border:1.5px solid var(--grey-border);border-radius:10px;font-size:13px;color:#1a1a1a;background:#fff;outline:none;margin-bottom:10px;font-family:var(--sans)"/>
+          <div style="display:flex;gap:8px">
+            <button onclick="closeOv('saveOv')" style="flex:1;padding:12px;background:var(--grey-light);color:#1a1a1a;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)">Cancel</button>
+            <button id="saveok" disabled onclick="confirmSave()" style="flex:2;padding:12px;background:#1a1a1a;color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans)">Save</button>
+          </div>
+        </div>
+      </div>
+      <!-- Pill sheet -->
+      <div id="pillScrim" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.42);z-index:25" onclick="closePillSheet()"></div>
+      <div id="pillSheet" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:26;background:#fff;border-radius:20px 20px 0 0;max-height:72%;flex-direction:column">
+        <div style="width:32px;height:3px;background:#e0e0e0;border-radius:2px;margin:14px auto 0;flex-shrink:0"></div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:13px 18px 10px;flex-shrink:0">
+          <div>
+            <div class="eyebrow" style="margin-bottom:3px" id="psCategory"></div>
+            <div style="font-family:var(--serif);font-weight:800;font-size:17px;color:#1a1a1a;line-height:1.25" id="psQuestion"></div>
+          </div>
+          <div onclick="closePillSheet()" style="width:26px;height:26px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:2px;font-size:15px;color:#777;line-height:1;font-family:var(--sans)">×</div>
+        </div>
+        <div style="overflow-y:auto;padding:0 18px 28px;flex:1" id="psOpts"></div>
+      </div>
+    </div>
+
+    <!-- ━━━━━━━━ S4: COMPARISON ━━━━━━━━ -->
+    <div class="screen" style="background:var(--grey-bg)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px 8px;flex-shrink:0;background:var(--grey-bg)">
+        <div class="bb" id="bb4" style="border-color:#ddd"></div>
+        <span id="ctitle" style="font-size:12px;font-weight:500;color:var(--grey-muted)">Comparing vehicles</span>
+        <div style="width:32px"></div>
+      </div>
+      <div style="display:flex;margin:0 16px 9px;border:1.5px solid var(--grey-border);border-radius:10px;overflow:hidden;flex-shrink:0">
+        <button id="ctabV" onclick="cmpShow('v')" class="cmp-tab" style="background:#1a1a1a;color:#fff">Verdict</button>
+        <button id="ctabS" onclick="cmpShow('s')" class="cmp-tab" style="background:#fff;color:#aaa">Compare by stat</button>
+      </div>
+      <div style="flex:1;overflow-y:auto;min-height:0;background:var(--grey-bg)">
+        <div id="cmpV" style="padding:0 16px 16px;display:flex;flex-direction:column;gap:9px"></div>
+        <div id="cmpS" style="padding:0 16px 16px;display:none">
+          <div style="font-size:11px;color:#aaa;line-height:1.6;margin-bottom:12px">Pick a dimension to see how your selected vehicles rank.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:13px">
+            <button class="sdim on" onclick="spotSet(this,'Reliability')" style="padding:5px 11px;border:1.5px solid #1a1a1a;border-radius:20px;font-size:10px;font-weight:600;background:#1a1a1a;color:#fff;cursor:pointer;font-family:var(--sans)">Reliability</button>
+            <button class="sdim" onclick="spotSet(this,'Fuel economy')" style="padding:5px 11px;border:1.5px solid var(--grey-border);border-radius:20px;font-size:10px;font-weight:600;background:#fff;color:#888;cursor:pointer;font-family:var(--sans)">Fuel economy</button>
+            <button class="sdim" onclick="spotSet(this,'Towing')" style="padding:5px 11px;border:1.5px solid var(--grey-border);border-radius:20px;font-size:10px;font-weight:600;background:#fff;color:#888;cursor:pointer;font-family:var(--sans)">Towing</button>
+            <button class="sdim" onclick="spotSet(this,'Safety')" style="padding:5px 11px;border:1.5px solid var(--grey-border);border-radius:20px;font-size:10px;font-weight:600;background:#fff;color:#888;cursor:pointer;font-family:var(--sans)">Safety</button>
+          </div>
+          <div id="spotrows" style="display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+      </div>
+      <div id="f4"></div>
+    </div>
+
+    <!-- ━━━━━━━━ S5: FINDER ━━━━━━━━ -->
+    <div class="screen" style="background:#fff">
+      <div style="padding:13px 18px 0;flex-shrink:0;display:flex;align-items:center">
+        <div class="bb" id="bb5"></div>
+      </div>
+      <div style="padding:11px 18px 13px;flex-shrink:0">
+        <div class="eyebrow" style="margin-bottom:7px">Finder</div>
+        <div style="font-family:var(--serif);font-weight:800;font-size:24px;color:#1a1a1a;line-height:1.12;margin-bottom:5px">What are you looking for?</div>
+        <div style="font-size:12px;color:#aaa;line-height:1.6">Select a make and model, then choose a year.</div>
+      </div>
+      <div style="flex:1;min-height:0;padding:0 16px;display:flex;flex-direction:column;gap:8px;overflow:hidden">
+        <div class="facc" style="flex:1" id="fc-make">
+          <div style="flex:1;display:flex;align-items:center;padding:0 22px;cursor:pointer" id="fcc-make" onclick="fgo('make')">
+            <div class="facc-label" id="flbl-make">Make</div>
+          </div>
+          <div style="display:none;flex-direction:column;height:100%;overflow:hidden" id="fce-make">
+            <div style="padding:13px 18px 10px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="fgo('make')">
+              <span class="eyebrow">Make</span>
+              <button onclick="fdone(event,'make')" class="facc-chip">Done</button>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:0 16px 13px">
+              <div style="display:flex;flex-wrap:wrap;gap:6px" id="fwrap-make"></div>
+            </div>
+          </div>
+        </div>
+        <div class="facc" style="flex:1" id="fc-model">
+          <div style="flex:1;display:flex;align-items:center;padding:0 22px;cursor:pointer" id="fcc-model" onclick="fgo('model')">
+            <div class="facc-label" id="flbl-model">Model</div>
+          </div>
+          <div style="display:none;flex-direction:column;height:100%;overflow:hidden" id="fce-model">
+            <div style="padding:13px 18px 10px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="fgo('model')">
+              <span class="eyebrow">Model</span>
+              <button onclick="fdone(event,'model')" class="facc-chip">Done</button>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:0 16px 13px">
+              <div style="display:flex;flex-wrap:wrap;gap:6px" id="fwrap-model"></div>
+            </div>
+          </div>
+        </div>
+        <div class="facc" style="flex:1" id="fc-year">
+          <div style="flex:1;display:flex;align-items:center;padding:0 22px;cursor:pointer" id="fcc-year" onclick="fgo('year')">
+            <div class="facc-label" id="flbl-year">Year</div>
+          </div>
+          <div style="display:none;flex-direction:column;height:100%;overflow:hidden" id="fce-year">
+            <div style="padding:13px 18px 10px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="fgo('year')">
+              <span class="eyebrow">Year</span>
+              <button onclick="fdone(event,'year')" class="facc-chip">Done</button>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:0 16px 13px">
+              <div style="display:flex;flex-wrap:wrap;gap:6px" id="fwrap-year"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:11px 16px 11px;flex-shrink:0;background:#fff">
+        <button id="fcta" disabled onclick="finderSearch()" class="cta-btn dim-btn" style="font-size:12.5px">Select make and model first</button>
+      </div>
+      <div id="f5"></div>
+    </div>
+
+    <!-- ━━━━━━━━ S6: DETAIL ━━━━━━━━ -->
+    <div class="screen" style="background:#fff">
+      <!-- floating topbar injected via JS -->
+      <div id="detTopbar" style="position:absolute;top:0;width:320px;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:linear-gradient(to bottom,rgba(0,0,0,.52),transparent)">
+        <div class="bb" id="bb6" style="background:rgba(255,255,255,.92);border-color:transparent"></div>
+        <div id="detSaveWrap" onclick="toggleDetSave()" style="display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.92);border-radius:20px;padding:5px 12px;cursor:pointer;transition:background .15s">
+          <svg id="detSaveIcon" width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="detSaveLbl" style="font-size:11px;font-weight:600;color:#1a1a1a">Save</span>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;min-height:0" id="detScroll">
+        <!-- carousel -->
+        <div style="position:relative;width:100%;height:205px;background:#1a1a1a;overflow:hidden">
+          <div style="display:flex;height:100%;transition:transform .3s ease" id="carousel"></div>
+          <div style="position:absolute;bottom:9px;left:50%;transform:translateX(-50%);display:flex;gap:5px" id="carDots"></div>
+          <div onclick="carPrev()" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.82);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:#1a1a1a;font-weight:700;line-height:1">&#8249;</div>
+          <div onclick="carNext()" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.82);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:#1a1a1a;font-weight:700;line-height:1">&#8250;</div>
+        </div>
+        <!-- detail content -->
+        <div style="padding:15px 16px 10px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:5px">
+            <div>
+              <div class="eyebrow" style="margin-bottom:3px" id="detCat"></div>
+              <div style="font-family:var(--serif);font-weight:800;font-size:22px;color:#1a1a1a;line-height:1.15" id="detName"></div>
+              <div style="font-size:12px;color:var(--grey-muted);margin-top:2px" id="detYear"></div>
+            </div>
+            <span id="detBadge" class="tag" style="margin-top:5px;flex-shrink:0"></span>
+          </div>
+        </div>
+        <!-- stat row -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #f2f2f2;border-bottom:1px solid #f2f2f2;margin:0 16px 15px" id="detStats"></div>
+        <!-- overview -->
+        <div style="padding:0 16px 15px">
+          <div class="eyebrow" style="margin-bottom:8px">Overview</div>
+          <div style="font-size:12.5px;color:#555;line-height:1.75" id="detWhy"></div>
+        </div>
+        <!-- reliability -->
+        <div style="padding:0 16px 15px">
+          <div class="eyebrow" style="margin-bottom:11px">Reliability</div>
+          <div id="detRelBars"></div>
+          <div style="font-size:11px;color:#aaa;margin-top:9px;line-height:1.65" id="detRelNote"></div>
+        </div>
+        <!-- 5-year cost -->
+        <div style="padding:0 16px 15px;background:#f8f8f8;margin:0 0 15px">
+          <div style="padding:13px 0 9px">
+            <div class="eyebrow">5 year cost estimate</div>
+          </div>
+          <div id="detCostRows"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;border-top:1px solid #e8e8e8;margin-top:7px">
+            <span style="font-size:12px;font-weight:700;color:#1a1a1a">Total estimated</span>
+            <span id="detCostTotal" style="font-size:15px;font-weight:800;color:#1a1a1a;letter-spacing:-.02em"></span>
+          </div>
+        </div>
+        <!-- safety -->
+        <div style="padding:0 16px 15px">
+          <div class="eyebrow" style="margin-bottom:11px">Safety</div>
+          <div id="detSafetyBadges" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px"></div>
+          <div id="detSafetyFeatures" style="display:flex;flex-direction:column;gap:7px"></div>
+        </div>
+        <!-- key specs -->
+        <div style="padding:0 16px 15px">
+          <div class="eyebrow" style="margin-bottom:11px">Key specs</div>
+          <div id="detSpecs" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+        </div>
+        <div style="height:14px"></div>
+      </div>
+      <div style="padding:10px 16px 11px;flex-shrink:0;background:#fff;border-top:1px solid #f0f0f0">
+        <button id="cta" onclick="nav(10)" class="cta-btn" style="font-size:13px;font-weight:600">View Local Inventory</button>
+      </div>
+      <div id="f6"></div>
+    </div>
+
+    <!-- ━━━━━━━━ S7: VOICE IDLE ━━━━━━━━ -->
+    <div class="screen" style="background:#fff">
+      <div style="display:flex;align-items:center;padding:11px 16px 5px;flex-shrink:0">
+        <div class="bb" onclick="nav(0)" id="bb7"></div>
+      </div>
+      <div style="flex:1;min-height:0;display:flex;flex-direction:column;padding:10px 18px 16px;overflow-y:auto">
+        <div class="eyebrow" style="margin-bottom:8px">Voice Search</div>
+        <div style="font-family:var(--serif);font-weight:800;font-size:24px;color:#1a1a1a;line-height:1.12;margin-bottom:5px">Tell us what you're looking for.</div>
+        <div style="font-size:12px;color:#aaa;line-height:1.6;margin-bottom:17px">For example, ask for...</div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          <span style="background:#1a1a1a;color:#fff;font-size:10.5px;font-weight:500;padding:6px 13px;border-radius:20px;white-space:nowrap">A reliable family SUV</span>
+          <span style="background:#1a1a1a;color:#fff;font-size:10.5px;font-weight:500;padding:6px 13px;border-radius:20px;white-space:nowrap">Under $40k</span>
+          <span style="background:#1a1a1a;color:#fff;font-size:10.5px;font-weight:500;padding:6px 13px;border-radius:20px;white-space:nowrap">Good in snow</span>
+          <span style="background:#1a1a1a;color:#fff;font-size:10.5px;font-weight:500;padding:6px 13px;border-radius:20px;white-space:nowrap">Hybrid or electric</span>
+          <span style="background:#1a1a1a;color:#fff;font-size:10.5px;font-weight:500;padding:6px 13px;border-radius:20px;white-space:nowrap">Seats 7 people</span>
+          <span style="background:#1a1a1a;color:#fff;font-size:10.5px;font-weight:500;padding:6px 13px;border-radius:20px;white-space:nowrap">Great fuel economy</span>
+          <span style="background:#1a1a1a;color:#fff;font-size:10.5px;font-weight:500;padding:6px 13px;border-radius:20px;white-space:nowrap">Can tow a trailer</span>
+          <span style="background:#1a1a1a;color:#fff;font-size:10.5px;font-weight:500;padding:6px 13px;border-radius:20px;white-space:nowrap">Top safety ratings</span>
+          <span style="background:#1a1a1a;color:#fff;font-size:10.5px;font-weight:500;padding:6px 13px;border-radius:20px;white-space:nowrap">Fun to drive</span>
+        </div>
+        <div style="flex:1"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:11px">
+          <div onclick="startVoice()" style="width:58px;height:58px;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .15s" onmouseenter="this.style.opacity='.82'" onmouseleave="this.style.opacity='1'">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.95-.49-7-3.85-7-7.93H2c0 4.42 3.13 8.09 7.26 8.87V21h2.49v-2.2H12v2.2h2.74v-3.13C18.87 17.09 22 13.42 22 9h-2c0 4.08-3.05 7.44-7 7.93V15.93z"/></svg>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:var(--grey-muted);letter-spacing:.03em">Tap to start</div>
+        </div>
+      </div>
+      <div id="f7" style="flex-shrink:0"></div>
+    </div>
+
+    <!-- ━━━━━━━━ S8: VOICE CONVERSATION ━━━━━━━━ -->
+    <div class="screen" style="background:#fff">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px 5px;flex-shrink:0">
+        <div class="bb" onclick="resetVoice()" id="bb8"></div>
+        <div onclick="resetVoice()" style="cursor:pointer;font-size:12px;font-weight:600;color:#1a1a1a;padding:5px 14px;border:1.5px solid var(--grey-border);border-radius:20px;font-family:var(--sans)">Clear</div>
+      </div>
+      <div id="vtr" style="flex:1;min-height:0;padding:5px 18px 0;overflow-y:auto;display:flex;flex-direction:column;gap:12px"></div>
+      <div style="padding:10px 20px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0">
+        <div style="position:relative;width:68px;height:68px;display:flex;align-items:center;justify-content:center">
+          <div id="vr2" class="vrr2" style="position:absolute;width:68px;height:68px;border-radius:50%;background:#1a1a1a"></div>
+          <div id="vr1" class="vrr1" style="position:absolute;width:52px;height:52px;border-radius:50%;background:#1a1a1a"></div>
+          <div style="position:relative;z-index:2;width:40px;height:40px;border-radius:50%;background:#1a1a1a;display:flex;align-items:center;justify-content:center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.95-.49-7-3.85-7-7.93H2c0 4.42 3.13 8.09 7.26 8.87V21h2.49v-2.2H12v2.2h2.74v-3.13C18.87 17.09 22 13.42 22 9h-2c0 4.08-3.05 7.44-7 7.93V15.93z"/></svg>
+          </div>
+        </div>
+        <div id="vml" style="font-size:11px;font-weight:500;color:var(--grey-muted);letter-spacing:.04em">Listening...</div>
+      </div>
+      <div id="f8" style="flex-shrink:0"></div>
+    </div>
+
+    <!-- ━━━━━━━━ S9: VOICE RESULTS ━━━━━━━━ -->
+    <div class="screen" style="background:var(--grey-bg)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px 8px;flex-shrink:0;background:var(--grey-bg)">
+        <div class="bb" onclick="resetVoice()" id="bb9" style="border-color:#ddd"></div>
+        <span style="font-size:11px;font-weight:500;color:var(--grey-muted)">Voice results</span>
+        <div style="width:32px"></div>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto">
+        <div style="padding:0 16px 11px;background:var(--grey-bg)">
+          <div style="font-family:var(--serif);font-weight:800;font-size:22px;color:#1a1a1a;margin-bottom:4px">Your matches.</div>
+          <div style="font-size:11px;color:var(--grey-muted);margin-bottom:11px">Gas &amp; Hybrid · $15k–$20k · Commuter · Reliable</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px">
+            <span class="chip">Daily commuting</span>
+            <span class="chip">$15k–$20k</span>
+            <span class="chip">Gas or Hybrid</span>
+            <span class="chip">Great mileage</span>
+            <span class="chip">Reliable</span>
+          </div>
+        </div>
+        <div class="eyebrow" style="padding:5px 16px 7px">Best matches</div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:0 16px 15px" id="vrgrid"></div>
+        <div style="padding:0 16px 15px">
+          <div style="font-size:10px;font-weight:500;color:var(--grey-muted);margin-bottom:6px"><span style="color:#1a1a1a;font-weight:700">0</span> of 4 selected to compare</div>
+          <button class="cta-btn dim-btn">Compare vehicles</button>
+        </div>
+      </div>
+      <div id="f9" style="flex-shrink:0"></div>
+    </div>
+
+    <!-- ━━━━━━━━ S10: INVENTORY ━━━━━━━━ -->
+    <div class="screen" style="background:var(--grey-bg)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px 8px;flex-shrink:0;background:var(--grey-bg)">
+        <div class="bb" onclick="nav(prevScr)" id="bb10" style="border-color:#ddd"></div>
+        <span style="font-size:11px;font-weight:500;color:var(--grey-muted)">Inventory</span>
+        <div style="width:32px"></div>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto">
+        <div style="padding:0 16px 12px;background:var(--grey-bg)">
+          <div style="font-family:var(--serif);font-weight:800;font-size:22px;color:#1a1a1a;margin-bottom:3px">Local Inventory</div>
+          <div style="font-size:11px;color:var(--grey-muted)">15 vehicles within 20 miles of 90045</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:0 16px 16px" id="invgrid"></div>
+      </div>
+      <div id="f10"></div>
+    </div>
+
+    <!-- ━━━━━━━━ S11: DEALER LISTING ━━━━━━━━ -->
+    <div class="screen" style="background:#fff;position:relative" id="s11wrap">
+
+      <!-- Carousel -->
+      <div style="position:relative;width:100%;height:190px;background:#1a1a1a;overflow:hidden;flex-shrink:0">
+        <div id="s11Track" style="display:flex;height:100%;transition:transform .3s cubic-bezier(.4,0,.2,1)"></div>
+        <div id="s11Dots" style="position:absolute;bottom:9px;left:50%;transform:translateX(-50%);display:flex;gap:5px"></div>
+        <div onclick="nav(prevScr)" style="position:absolute;left:9px;top:9px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <svg width="11" height="11" viewBox="0 0 11 11"><path d="M7.5 1L2.5 5.5L7.5 10" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        </div>
+        <div id="s11SaveBtn" onclick="s11ToggleSave()" style="position:absolute;right:9px;top:9px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.9);border-radius:20px;padding:4px 10px;cursor:pointer">
+          <svg id="s11SaveIco" width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="s11SaveLbl" style="font-size:11px;font-weight:600;color:#1a1a1a">Save</span>
+        </div>
+        <div onclick="s11CarPrev()" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#1a1a1a;font-weight:700;line-height:1;margin-top:10px">&#8249;</div>
+        <div onclick="s11CarNext()" style="position:absolute;right:9px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#1a1a1a;font-weight:700;line-height:1;margin-top:10px">&#8250;</div>
+      </div>
+
+      <!-- Scrollable content -->
+      <div style="flex:1;min-height:0;overflow-y:auto">
+
+        <!-- Title -->
+        <div style="padding:12px 16px 9px">
+          <div class="eyebrow" style="margin-bottom:4px">New · Compact SUV</div>
+          <div style="font-family:var(--serif);font-weight:800;font-size:20px;color:#1a1a1a;line-height:1.12;margin-bottom:7px">2025 Toyota RAV4 Hybrid</div>
+          <div style="display:inline-flex;align-items:center;gap:5px;background:#f7f7f7;border:1px solid #e8e8e8;border-radius:20px;padding:3px 9px;font-size:10px;font-weight:600;color:#777">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Dealer A
+          </div>
+        </div>
+
+        <!-- Stat strip -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #f2f2f2;border-bottom:1px solid #f2f2f2;margin:0 16px 12px">
+          <div style="display:flex;flex-direction:column;align-items:center;padding:9px 4px;border-right:1px solid #f2f2f2"><div style="font-size:12px;font-weight:800;color:#1a1a1a;margin-bottom:1px">0</div><div style="font-size:8px;font-weight:500;color:#bbb;text-transform:uppercase;letter-spacing:.06em">Miles</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;padding:9px 4px;border-right:1px solid #f2f2f2"><div style="font-size:12px;font-weight:800;color:#1a1a1a;margin-bottom:1px">38 mpg</div><div style="font-size:8px;font-weight:500;color:#bbb;text-transform:uppercase;letter-spacing:.06em">Economy</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;padding:9px 4px;border-right:1px solid #f2f2f2"><div style="font-size:12px;font-weight:800;color:#1a1a1a;margin-bottom:1px">5.0/5</div><div style="font-size:8px;font-weight:500;color:#bbb;text-transform:uppercase;letter-spacing:.06em">Reliability</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;padding:9px 4px"><div style="font-size:12px;font-weight:800;color:#1a1a1a;margin-bottom:1px">TSP+</div><div style="font-size:8px;font-weight:500;color:#bbb;text-transform:uppercase;letter-spacing:.06em">Safety</div></div>
+        </div>
+
+        <!-- Price analysis -->
+        <div style="margin:0 16px 12px;background:#f7f7f7;border-radius:12px;padding:11px 13px">
+          <div class="eyebrow" style="margin-bottom:7px">Price analysis</div>
+          <div style="display:flex;align-items:baseline;gap:7px;margin-bottom:10px">
+            <span style="font-size:18px;font-weight:800;color:#2a7a2a;letter-spacing:-.02em">$41,850</span>
+            <span style="font-size:10px;font-weight:600;color:#2a7a2a;background:#e8f5e8;padding:2px 7px;border-radius:20px">$890 below MSRP</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:11px;color:#bbb;white-space:nowrap">Below</span>
+            <div style="flex:1;height:4px;background:#e0e0e0;border-radius:2px;position:relative;margin-top:18px">
+              <div style="position:absolute;top:-5px;left:26%;width:3px;height:13px;background:#2a7a2a;border-radius:2px"><div style="position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:500;color:#2a7a2a">$41,850</div></div>
+              <div style="position:absolute;top:-5px;left:51%;width:3px;height:13px;background:#b07800;border-radius:2px"><div style="position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:500;color:#b07800">$42,100</div></div>
+              <div style="position:absolute;top:-5px;left:71%;width:3px;height:13px;background:#1a1a1a;border-radius:2px"><div style="position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:500;color:#1a1a1a">$42,740</div></div>
+            </div>
+            <span style="font-size:11px;color:#bbb;white-space:nowrap">Above</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:7px">
+            <div style="display:flex;align-items:center;gap:3px"><div style="width:7px;height:7px;border-radius:1px;background:#2a7a2a"></div><span style="font-size:11px;color:#2a7a2a;font-weight:500">Dealer price</span></div>
+            <div style="display:flex;align-items:center;gap:3px"><div style="width:7px;height:7px;border-radius:1px;background:#b07800"></div><span style="font-size:11px;color:#b07800;font-weight:500">Market avg</span></div>
+            <div style="display:flex;align-items:center;gap:3px"><div style="width:7px;height:7px;border-radius:1px;background:#1a1a1a"></div><span style="font-size:11px;color:#777;font-weight:500">MSRP</span></div>
+          </div>
+        </div>
+
+        <!-- Listing details -->
+        <div style="padding:0 16px 12px">
+          <div class="eyebrow" style="margin-bottom:7px">Listing details</div>
+          <div style="background:#fff;border:1px solid #e8e8e8;border-radius:11px;overflow:hidden">
+            <div style="display:flex;justify-content:space-between;padding:6px 11px;border-bottom:1px solid #f2f2f2"><span style="font-size:11px;color:#777">Condition</span><span style="font-size:11px;font-weight:600;color:#1a1a1a">New</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 11px;border-bottom:1px solid #f2f2f2"><span style="font-size:11px;color:#777">Stock #</span><span style="font-size:11px;font-weight:600;color:#1a1a1a">TY-2025-10042</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 11px;border-bottom:1px solid #f2f2f2"><span style="font-size:11px;color:#777">VIN</span><span style="font-size:9.5px;font-weight:600;color:#777;font-family:monospace">4T3R6RFV5RU010042</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 11px;border-bottom:1px solid #f2f2f2"><span style="font-size:11px;color:#777">Exterior</span><span style="font-size:11px;font-weight:600;color:#1a1a1a">Blueprint</span></div>
+            <div style="display:flex;justify-content:space-between;padding:6px 11px"><span style="font-size:11px;color:#777">Drivetrain</span><span style="font-size:11px;font-weight:600;color:#1a1a1a">AWD Standard</span></div>
+          </div>
+        </div>
+
+        <!-- Key features -->
+        <div style="padding:0 16px 12px">
+          <div class="eyebrow" style="margin-bottom:7px">Key features</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <span style="background:#f7f7f7;border:1px solid #e8e8e8;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500;color:#777">Apple CarPlay</span>
+            <span style="background:#f7f7f7;border:1px solid #e8e8e8;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500;color:#777">Heated seats</span>
+            <span style="background:#f7f7f7;border:1px solid #e8e8e8;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500;color:#777">Sunroof</span>
+            <span style="background:#f7f7f7;border:1px solid #e8e8e8;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500;color:#777">Lane assist</span>
+            <span style="background:#f7f7f7;border:1px solid #e8e8e8;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500;color:#777">Blind spot monitoring</span>
+            <span style="background:#f7f7f7;border:1px solid #e8e8e8;border-radius:20px;padding:3px 9px;font-size:11px;font-weight:500;color:#777">Radar cruise</span>
+          </div>
+        </div>
+
+        <!-- Dealer incentives -->
+        <div style="padding:0 16px 12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+            <div class="eyebrow">Active dealer incentives</div>
+            <span style="font-size:11px;font-weight:500;color:#bbb">3 available</span>
+          </div>
+          <div style="border:1px solid #e8e8e8;border-radius:10px;padding:10px 12px;margin-bottom:6px;background:#fff">
+            <div style="display:inline-flex;background:#1a1a1a;color:#fff;font-size:11px;font-weight:700;padding:2px 6px;border-radius:20px;margin-bottom:3px">Toyota Direct</div>
+            <div style="font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:2px">$1,500 Customer Cash</div>
+            <div style="font-size:10px;color:#777;line-height:1.5">Manufacturer cash back on select 2025 RAV4 Hybrid trims.</div>
+            <div style="font-size:11px;color:#bbb;margin-top:4px">Expires Jan 31, 2026</div>
+          </div>
+          <div style="border:1px solid #e8e8e8;border-radius:10px;padding:10px 12px;margin-bottom:6px;background:#fff">
+            <div style="display:inline-flex;background:#1a1a1a;color:#fff;font-size:11px;font-weight:700;padding:2px 6px;border-radius:20px;margin-bottom:3px">Finance Offer</div>
+            <div style="font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:2px">2.9% APR for 60 months</div>
+            <div style="font-size:10px;color:#777;line-height:1.5">Toyota Financial Services. Cannot combine with Customer Cash.</div>
+            <div style="font-size:11px;color:#bbb;margin-top:4px">Expires Jan 31, 2026</div>
+          </div>
+          <div style="border:1px solid #f0d8d8;border-radius:10px;padding:10px 12px;background:#fff">
+            <div style="display:inline-flex;background:#f7f7f7;color:#777;border:1px solid #e8e8e8;font-size:11px;font-weight:700;padding:2px 6px;border-radius:20px;margin-bottom:3px">Dealer Offer</div>
+            <div style="font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:2px">Free all-weather mats + cargo liner</div>
+            <div style="font-size:10px;color:#777;line-height:1.5">Dealer accessory bundle ($420 value). This stock unit only.</div>
+            <div style="font-size:11px;color:#c44;font-weight:600;margin-top:4px">Expires Jan 6, 2026</div>
+          </div>
+        </div>
+
+        <div style="height:6px"></div>
+      </div><!-- /scroll -->
+
+      <!-- Pinned CTA -->
+      <div style="padding:9px 16px 10px;flex-shrink:0;background:#fff;border-top:1px solid #eee">
+        <button id="s11CtaBtn" onclick="s11OpenSheet()" style="width:100%;padding:12px;background:#1a1a1a;color:#fff;border:none;border-radius:12px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--sans);line-height:1.3;transition:opacity .15s">Message the dealer about this vehicle</button>
+      </div>
+
+      <!-- Footer injected via JS -->
+      <div id="f11"></div>
+
+      <!-- ── INQUIRY SHEET SCRIM ── -->
+      <div id="s11Scrim" onclick="s11CloseSheet()" style="position:absolute;inset:0;background:rgba(0,0,0,0);z-index:30;pointer-events:none;transition:background .3s ease"></div>
+
+      <!-- ── INQUIRY BOTTOM SHEET ── -->
+      <div id="s11Sheet" style="position:absolute;bottom:0;left:0;right:0;z-index:31;background:#fff;border-radius:20px 20px 0 0;height:76%;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.32,0,.18,1);overflow:hidden">
+        <div style="padding:12px 0 0;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:11px">
+          <div style="width:32px;height:3px;background:#e0e0e0;border-radius:2px"></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div id="s11Prog" style="display:flex;align-items:center;gap:5px"></div>
+            <span id="s11ProgLbl" style="font-size:11px;font-weight:500;color:#bbb;margin-left:2px">Step 1 of 3</span>
+          </div>
+        </div>
+        <div id="s11Body" style="flex:1;min-height:0;overflow-y:auto;padding:0 18px"></div>
+        <div id="s11Footer" style="padding:10px 18px 14px;flex-shrink:0;border-top:1px solid #e8e8e8;background:#fff"></div>
+      </div>
+
+    </div>
+
+  </div><!-- /track -->
+  </div><!-- /scroll wrapper -->
+</div><!-- /phone -->
+</div><!-- /outer -->
+
+<script>
+// ── ICONS ─────────────────────────────────────────────────────────────────────
+var ARR='<svg width="11" height="11" viewBox="0 0 11 11" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 1L2.5 5.5L7.5 10" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>';
+var HEART_OFF='<svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" fill="#ccc"/></svg>';
+var HEART_ON='<svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" fill="#cc2222"/></svg>';
+var START_SVG='<svg width="19" height="19" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A6.92 6.92 0 0119 12c0 3.87-3.13 7-7 7A7 7 0 015 12c0-2.28 1.09-4.3 2.58-5.42L6.17 5.17A8.932 8.932 0 003 12a9 9 0 0018 0c0-2.74-1.23-5.18-3.17-6.83z" fill="#1a1a1a"/></svg>';
+var MIC_SVG='<svg width="18" height="18" viewBox="0 0 24 24" fill="#1a1a1a"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.95-.49-7-3.85-7-7.93H2c0 4.42 3.13 8.09 7.26 8.87V21h2.49v-2.2H12v2.2h2.74v-3.13C18.87 17.09 22 13.42 22 9h-2c0 4.08-3.05 7.44-7 7.93V15.93z"/></svg>';
+var SAVE_SVG='<svg width="17" height="17" viewBox="0 0 24 24" fill="#1a1a1a"><path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z"/></svg>';
+var CAR_SVG='<svg width="56" height="28" viewBox="0 0 56 28" fill="none"><rect x="3" y="15" width="50" height="10" rx="2" fill="rgba(255,255,255,.65)"/><path d="M7 15C7 9 12 4 28 4S49 9 49 15" fill="rgba(255,255,255,.45)"/><rect x="8" y="8" width="11" height="6" rx="1" fill="rgba(255,255,255,.22)"/><rect x="22" y="7" width="12" height="7" rx="1" fill="rgba(255,255,255,.22)"/><rect x="37" y="8" width="9" height="6" rx="1" fill="rgba(255,255,255,.22)"/><circle cx="13" cy="25" r="4" fill="#333" stroke="rgba(255,255,255,.6)" stroke-width="1.5"/><circle cx="43" cy="25" r="4" fill="#333" stroke="rgba(255,255,255,.6)" stroke-width="1.5"/></svg>';
+var CHECK_SVG='<svg width="8" height="8" viewBox="0 0 24 24" fill="#1a1a1a"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+var CHECK_WHITE='<svg width="8" height="8" viewBox="0 0 24 24" fill="#fff"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+
+// Inject back arrows
+['bb1','bb2','bb3','bb4','bb5','bb6'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=ARR;});
+document.getElementById('bb1').onclick=function(){nav(0);};
+document.getElementById('bb2').onclick=function(){qPrev();};
+document.getElementById('bb3').onclick=function(){nav(2);};
+document.getElementById('bb4').onclick=function(){nav(3);};
+document.getElementById('bb5').onclick=function(){nav(0);};
+document.getElementById('bb6').onclick=function(){nav(prevScr);};
+
+// ── FOOTER ────────────────────────────────────────────────────────────────────
+var FOOTER_ITEMS=[
+  {svg:MIC_SVG,lbl:'Voice',screens:[7,8,9],fn:function(){nav(7);}},
+  {svg:START_SVG,lbl:'Search',screens:[0,2,3,4,5,6,10,11],fn:function(){nav(0);}},
+  {svg:SAVE_SVG,lbl:'Saved',screens:[1],fn:function(){nav(1);}},
+  {svg:'<div style="position:relative;width:20px;height:20px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="#1a1a1a" stroke="none"/><circle cx="12" cy="10" r="1" fill="#1a1a1a" stroke="none"/><circle cx="15" cy="10" r="1" fill="#1a1a1a" stroke="none"/></svg><div style="position:absolute;top:-3px;right:-4px;width:8px;height:8px;border-radius:50%;background:#e02020;border:1.5px solid #fff"></div></div>',lbl:'Messages',screens:[],fn:function(){}}
+];
+
+function mkFooter(){
+  var w=document.createElement('div');
+  w.className='footer-bar-el';
+  w.style.cssText='display:flex;align-items:center;justify-content:space-around;border-top:1px solid #ededee;background:#fff;flex-shrink:0;padding:8px 0 12px';
+  FOOTER_ITEMS.forEach(function(item,idx){
+    var b=document.createElement('button');
+    b.dataset.tabIdx=idx;
+    b.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;border:none;background:none;cursor:pointer;padding:0 10px;font-family:var(--sans);opacity:1;transition:opacity .15s';
+    b.innerHTML=item.svg+'<span style="font-size:11px;font-weight:500;color:#1a1a1a">'+item.lbl+'</span>';
+    b.onclick=item.fn;
+    w.appendChild(b);
+  });
+  return w;
+}
+
+function syncFooterActive(screenIdx){
+  var activeTab=-1;
+  FOOTER_ITEMS.forEach(function(item,idx){
+    if(item.screens.indexOf(screenIdx)>-1)activeTab=idx;
+  });
+  document.querySelectorAll('.footer-bar-el').forEach(function(bar){
+    var btns=bar.querySelectorAll('button');
+    btns.forEach(function(btn,idx){
+      var isActive=idx===activeTab;
+      var svgWrap=btn.querySelector('svg,div');
+      var lbl=btn.querySelector('span');
+      btn.style.opacity=isActive?'1':'0.38';
+      if(lbl)lbl.style.fontWeight=isActive?'700':'500';
+    });
+  });
+}
+[0,1,2,3,4,5,6,7,8,10,11].forEach(function(i){var el=document.getElementById('f'+i);if(el)el.appendChild(mkFooter());});
+document.getElementById('f9').appendChild(mkFooter());
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+var SW=320,curScr=0,prevScr=5,detSaved=false,detCarIdx=0;
+function navBase(idx){
+  curScr=idx;
+  document.getElementById('track').style.transform='translateX('+(-idx*SW)+'px)';
+  var grey=[3,4,9,10].includes(idx);
+  document.getElementById('nb').style.background=grey?'var(--grey-bg)':'#fff';
+  document.getElementById('sb').style.background=grey?'var(--grey-bg)':'#fff';
+  if(idx===1)renderSaved();
+  if(idx===4)buildCmp();
+  syncFooterActive(idx);
+}
+var nav=function(idx){navBase(idx);if(idx===10)buildInventory();if(idx===11)s11Init();};
+
+// Position detail topbar
+(function(){var tb=document.getElementById('detTopbar');if(tb)tb.style.left=(6*320)+'px';})();
+
+// ── OVERLAY HELPERS ──────────────────────────────────────────────────────────
+function openOv(id){var el=document.getElementById(id);el.style.display='flex';el.style.opacity='0';el.style.transition='opacity .22s ease';setTimeout(function(){el.style.opacity='1';},10);}
+function closeOv(id){var el=document.getElementById(id);el.style.opacity='0';setTimeout(function(){el.style.display='none';el.style.opacity='';el.style.transition='';},240);}
+
+// ── PILL SHEET ────────────────────────────────────────────────────────────────
+var editingStep=null,sheetClosing=false;
+function openPillSheet(stepIdx){
+  if(sheetClosing)return;editingStep=stepIdx;
+  var s=STEPS[stepIdx];document.getElementById('psCategory').textContent=s.cat;document.getElementById('psQuestion').textContent=s.q;
+  var c=document.getElementById('psOpts');c.innerHTML='';
+  s.opts.forEach(function(o,i){
+    var sel=qs[stepIdx]===i;
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #f5f5f5;cursor:pointer';
+    row.innerHTML='<div style="flex:1;padding-right:12px"><div style="font-size:13px;font-weight:'+(sel?'600':'400')+';color:#1a1a1a;margin-bottom:2px">'+o.t+'</div><div style="font-size:10px;color:#bbb;line-height:1.4">'+o.s+'</div></div><div style="width:20px;height:20px;border-radius:50%;border:1.5px solid '+(sel?'#1a1a1a':'#ddd')+';flex-shrink:0;display:flex;align-items:center;justify-content:center;background:'+(sel?'#1a1a1a':'#fff')+'">'+(sel?CHECK_WHITE:'')+'</div>';
+    row.onclick=(function(idx){return function(){selectPillOption(idx);};})(i);
+    c.appendChild(row);
+  });
+  var scrim=document.getElementById('pillScrim');scrim.style.display='block';scrim.style.opacity='0';scrim.style.transition='opacity .28s ease';setTimeout(function(){scrim.style.opacity='1';},10);
+  var sheet=document.getElementById('pillSheet');sheet.style.display='flex';sheet.style.transform='translateY(100%)';sheet.style.transition='none';setTimeout(function(){sheet.style.transition='transform .38s cubic-bezier(.32,0,.18,1)';sheet.style.transform='translateY(0)';},10);
+}
+function closePillSheet(){
+  if(sheetClosing)return;sheetClosing=true;
+  var scrim=document.getElementById('pillScrim'),sheet=document.getElementById('pillSheet');
+  sheet.style.transition='transform .32s cubic-bezier(.4,0,1,1)';sheet.style.transform='translateY(100%)';
+  scrim.style.transition='opacity .28s ease';scrim.style.opacity='0';
+  setTimeout(function(){sheet.style.display='none';sheet.style.transform='';sheet.style.transition='';scrim.style.display='none';scrim.style.opacity='';scrim.style.transition='';editingStep=null;sheetClosing=false;},340);
+}
+function selectPillOption(optIdx){qs[editingStep]=optIdx;closePillSheet();setTimeout(function(){renderPills();rRender();},120);}
+
+// ── QUESTIONS ─────────────────────────────────────────────────────────────────
+var STEPS=[
+  {cat:"Primary use",q:"What is your primary reason for buying?",sub:"This shapes body type, size, and feature priorities.",opts:[{t:"Daily commuting",s:"Work trips, school runs, everyday errands"},{t:"Family hauler",s:"Kids, car seats, sports gear, multiple passengers"},{t:"Outdoor and adventure",s:"Camping, trails, towing, weekend escapes"},{t:"Work and hauling",s:"Job site use, towing, cargo, payload"},{t:"Long road trips",s:"Comfort, range, highway fuel economy, luggage"},{t:"Urban and city only",s:"Tight parking, short trips, easy to maneuver"}]},
+  {cat:"Passengers",q:"How many people do you regularly carry?",sub:"Think typical trips, not your once a year holiday.",opts:[{t:"Just me, or 1 to 2 people max",s:"Sports cars, coupes, small sedans are fine"},{t:"Up to 4 people",s:"Standard sedan, hatchback, or compact SUV"},{t:"5 people regularly",s:"Mid size SUV, crossover, or minivan"},{t:"6 to 8 people",s:"3 row SUV or minivan, non negotiable"}]},
+  {cat:"Cargo",q:"How much cargo or gear do you carry?",sub:"Helps us weigh cargo volume versus passenger space.",opts:[{t:"Very little",s:"Gym bag, groceries, daily basics only"},{t:"Moderate",s:"Stroller, sports gear, weekly shop"},{t:"Heavy or bulky",s:"Lumber, equipment, bikes, camping kit"},{t:"Towing required",s:"Boat, trailer, camper, or work equipment"}]},
+  {cat:"Terrain",q:"What kind of roads do you drive most?",sub:"Determines drivetrain and ground clearance needs.",opts:[{t:"All paved and highway",s:"City streets and highways, smooth surfaces only"},{t:"Snow and winter roads",s:"AWD or 4WD matters for safety and traction"},{t:"Occasional off road",s:"Gravel, dirt trails, light off pavement"},{t:"Serious off road",s:"Mud, rocks, steep grades, capable 4x4 needed"}]},
+  {cat:"Budget",q:"What is your total vehicle budget?",sub:"Include what you can finance, not just cash on hand.",opts:[{t:"Under $15,000",s:"Used market, reliability and mileage matter most"},{t:"$15,000 to $25,000",s:"Good used or entry level new"},{t:"$25,000 to $40,000",s:"Mid range new or excellent used"},{t:"$40,000 to $60,000",s:"Full featured new or near luxury used"},{t:"Over $60,000",s:"Luxury or high spec truck or performance"}]},
+  {cat:"Priority",q:"What matters most to you?",sub:"We will weight your recommendations around your top priority.",opts:[{t:"Reliability",s:"Fewest repairs, long ownership"},{t:"Fuel economy",s:"Lowest running cost, best MPG"},{t:"Safety ratings",s:"NHTSA 5 star, IIHS Top Safety Pick"},{t:"Technology",s:"Latest infotainment and driver assistance"},{t:"Driving performance",s:"Fun, responsive, powerful"},{t:"Best value",s:"Most car per dollar spent"}]},
+  {cat:"Powertrain",q:"Any powertrain preference?",sub:"Hybrids have surged in reliability. EVs cut running costs dramatically.",opts:[{t:"Gas only",s:"Widest inventory, simplest ownership"},{t:"Hybrid",s:"Best fuel savings, no charging needed"},{t:"Plug in hybrid",s:"EV for daily, gas for long trips"},{t:"Full electric",s:"Zero fuel cost, home charging needed"},{t:"No preference",s:"Show me the best fit regardless"}]}
+];
+
+var qc=0;
+var qs=Array(STEPS.length).fill(null);
+
+function qBuild(){
+  var s=STEPS[qc];
+  document.getElementById('qsl').textContent=(qc+1)+' of '+STEPS.length;
+  document.getElementById('qcat').textContent=s.cat;
+  document.getElementById('qtext').textContent=s.q;
+  document.getElementById('qsub').textContent=s.sub;
+  document.getElementById('bb2').style.opacity=qc===0?'0.3':'1';
+  var prog=document.getElementById('qprog');prog.innerHTML='';
+  STEPS.forEach(function(_,i){
+    var d=document.createElement('div');
+    d.className='prog-bar-seg'+(i<=qc?' done':'');
+    prog.appendChild(d);
+  });
+  var opts=document.getElementById('qopts');opts.innerHTML='';
+  s.opts.forEach(function(o,i){
+    var d=document.createElement('div');
+    var sel=qs[qc]===i;
+    d.className='opt-row'+(sel?' sel':'');
+    d.innerHTML='<div><div class="ot">'+o.t+'</div><div class="os">'+o.s+'</div></div><div class="opt-check">'+(sel?CHECK_WHITE:'')+'</div>';
+    d.onclick=(function(idx){return function(){qs[qc]=idx;qBuild();};})(i);
+    opts.appendChild(d);
+  });
+  var btn=document.getElementById('qbtn');
+  btn.disabled=qs[qc]===null;
+  if(qs[qc]!==null){btn.classList.remove('dim-btn');btn.style.background='#1a1a1a';btn.style.color='#fff';btn.style.cursor='pointer';}
+  else{btn.classList.add('dim-btn');btn.style.background='#ebebeb';btn.style.color='#ccc';btn.style.cursor='default';}
+  btn.textContent=qc===STEPS.length-1?'See my matches':'Continue';
+  document.getElementById('qscroll').scrollTop=0;
+}
+function qNext(){if(qs[qc]===null)return;if(qc===STEPS.length-1){renderPills();rRender();nav(3);return;}qc++;qBuild();}
+function qPrev(){if(qc>0){qc--;qBuild();}else{qc=0;nav(0);}}
+qBuild();
+
+function renderPills(){
+  var c=document.getElementById('rpills');c.innerHTML='';var any=false;
+  STEPS.forEach(function(step,i){
+    if(qs[i]===null)return;any=true;
+    var pill=document.createElement('button');
+    var txt=step.opts[qs[i]].t;
+    var label=txt.length>18?txt.slice(0,17)+'…':txt;
+    pill.className='chip';
+    pill.style.fontFamily='var(--sans)';
+    pill.innerHTML=label+'<svg width="9" height="9" viewBox="0 0 24 24" fill="#bbb"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm17.71-10.46a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
+    pill.onclick=(function(idx){return function(e){e.stopPropagation();openPillSheet(idx);};})(i);
+    c.appendChild(pill);
+  });
+  if(!any){var note=document.createElement('span');note.style.cssText='font-size:10px;color:#ccc;font-style:italic;font-family:var(--sans)';note.textContent='No filters yet — complete the questions to filter';c.appendChild(note);}
+}
+
+// ── VEHICLES ──────────────────────────────────────────────────────────────────
+var CARS=[
+  {n:"Toyota RAV4 Hybrid",y:"2022 to 2024",l:"Best match",r:"5.0/5",m:"38 mpg",t:"3,500 lbs",traits:{use:[1],pass:[2],cargo:[1,2],terrain:[0,1],budget:[2,3],priority:[0,1],power:[1,4]}},
+  {n:"Honda CR-V Hybrid",y:"2022 to 2024",l:"Best match",r:"5.0/5",m:"38 mpg",t:"1,500 lbs",traits:{use:[0,1],pass:[2],cargo:[1],terrain:[0,1],budget:[2,3],priority:[0,1,2],power:[1,4]}},
+  {n:"Subaru Outback",y:"2022 to 2024",l:"Great fit",r:"4.0/5",m:"30 mpg",t:"3,500 lbs",traits:{use:[1,2],pass:[1,2],cargo:[1,2],terrain:[1,2],budget:[2,3],priority:[0,2],power:[0,4]}},
+  {n:"Mazda CX-5",y:"2022 to 2024",l:"Great fit",r:"4.0/5",m:"29 mpg",t:"2,000 lbs",traits:{use:[0,1,4],pass:[1,2],cargo:[1],terrain:[0,1],budget:[2,3],priority:[3,4,5],power:[0,4]}},
+  {n:"Toyota Venza Hybrid",y:"2022 to 2024",l:"Great fit",r:"4.0/5",m:"40 mpg",t:"1,500 lbs",traits:{use:[0,1,4],pass:[1,2],cargo:[1],terrain:[0,1],budget:[2,3],priority:[1,5],power:[1,4]}},
+  {n:"Hyundai Tucson Hybrid",y:"2022 to 2024",l:"Great fit",r:"3.5/5",m:"38 mpg",t:"2,000 lbs",traits:{use:[0,1],pass:[1,2],cargo:[1],terrain:[0,1],budget:[2,3],priority:[3,5],power:[1,4]}},
+  {n:"Subaru Forester",y:"2022 to 2024",l:"Good option",r:"4.0/5",m:"30 mpg",t:"1,500 lbs",traits:{use:[1,2],pass:[1,2],cargo:[1,2],terrain:[1,2],budget:[2],priority:[0,2],power:[0,4]}},
+  {n:"Kia Sportage Hybrid",y:"2022 to 2024",l:"Good option",r:"3.5/5",m:"38 mpg",t:"2,000 lbs",traits:{use:[0,1],pass:[1,2],cargo:[1],terrain:[0],budget:[1,2],priority:[3,5],power:[1,4]}}
+];
+
+function scorecar(car){var s=0;['use','pass','cargo','terrain','budget','priority','power'].forEach(function(k,i){if(qs[i]!==null&&car.traits[k]&&car.traits[k].indexOf(qs[i])>-1)s++;});return s;}
+var picked=new Set();
+
+function rRender(){
+  var allNull=qs.every(function(q){return q===null;});
+  var scored=CARS.map(function(c){return{c:c,score:scorecar(c)};});
+  scored.sort(function(a,b){return b.score-a.score;});
+  scored.forEach(function(item,i){item.c.l=i<=1?'Best match':i<=3?'Great fit':'Good option';});
+  document.getElementById('rmatch').textContent=allNull?'All vehicles shown. Answer questions to filter and rank.':scored.filter(function(x){return x.score>=3;}).length+' vehicles matched, ranked by score.';
+  var g=document.getElementById('rgrid');g.innerHTML='';
+  scored.slice(0,8).forEach(function(item){
+    var c=item.c;
+    var isSel=picked.has(c.n),maxed=!isSel&&picked.size>=4;
+    var el=document.createElement('div');
+    el.className='vcard'+(isSel?' sel':'')+(maxed?' dim':'');
+    el.innerHTML=
+      '<div style="padding:9px 8px 5px">'+
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">'+
+          '<span style="font-size:11px;font-weight:700;color:#fff;background:rgba(0,0,0,.55);padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em">'+c.l+'</span>'+
+          (allNull?'':'<span style="background:#f0f0f0;border-radius:4px;padding:1px 5px;font-size:11px;color:#777;font-weight:600">'+item.score+'/7</span>')+
+        '</div>'+
+        '<div style="font-size:11px;font-weight:700;color:#1a1a1a;line-height:1.25;margin-bottom:1px">'+c.n+'</div>'+
+        '<div style="font-size:11px;color:#ccc;margin-bottom:7px">'+c.y+'</div>'+
+        '<div style="display:flex;flex-direction:column;gap:2px">'+
+          '<div class="stat-row"><span class="sk">Reliability</span><span class="sv">'+c.r+'</span></div>'+
+          '<div class="stat-row"><span class="sk">Economy</span><span class="sv">'+c.m+'</span></div>'+
+        '</div>'+
+        '<div style="margin-top:7px;padding-top:6px;border-top:1px solid #f5f5f5">'+
+          '<button data-name="'+c.n+'" onclick="event.stopPropagation();goDetail(this.dataset.name,3)" style="width:100%;padding:5px 0;background:none;border:1.5px solid #e8e8e8;border-radius:7px;font-size:11px;font-weight:600;color:#777;cursor:pointer;font-family:var(--sans)">View details</button>'+
+        '</div>'+
+      '</div>';
+    el.onclick=(function(name){return function(){if(picked.has(name))picked.delete(name);else if(picked.size<4)picked.add(name);rRender();};})(c.n);
+    g.appendChild(el);
+  });
+  rTray();
+}
+
+function rTray(){
+  var count=picked.size;
+  document.getElementById('rselcount').textContent=count;
+  var ch=document.getElementById('rchips');ch.innerHTML='';
+  picked.forEach(function(n){
+    var c=document.createElement('div');
+    c.style.cssText='background:#f5f5f5;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:600;color:#555;display:flex;align-items:center;gap:3px;font-family:var(--sans)';
+    var s=n.length>13?n.slice(0,12)+'…':n;
+    c.innerHTML=s+'<button style="color:#bbb;cursor:pointer;font-size:12px;background:none;border:none;padding:0;line-height:1;font-family:var(--sans)" onclick="picked.delete(\''+n+'\');rRender()">×</button>';
+    ch.appendChild(c);
+  });
+  var btn=document.getElementById('rcta');
+  if(count>=2){btn.classList.remove('dim-btn');btn.style.background='#1a1a1a';btn.style.color='#fff';btn.style.cursor='pointer';btn.textContent='Compare '+count+' vehicles';}
+  else{btn.classList.add('dim-btn');btn.style.background='#ebebeb';btn.style.color='#ccc';btn.style.cursor='default';btn.textContent='Compare vehicles';}
+}
+function goCompare(){if(picked.size<2)return;nav(4);}
+renderPills();rRender();
+
+// ── VEHICLE DETAIL ────────────────────────────────────────────────────────────
+var VD={
+  "Toyota RAV4 Hybrid":{cat:"Compact SUV",badge:"Top pick",year:"2022 to 2024",rel:"5.0/5",mpg:"38 mpg",tow:"3,500",saf:"TSP+",why:"Toyota's industry-leading reliability score, 38 MPG combined, and standard AWD make this an excellent all-round choice for families.",relBars:[{l:"Overall",v:95},{l:"Engine",v:98},{l:"Transmission",v:97},{l:"Electronics",v:88}],relNote:"Consumer Reports rates the RAV4 Hybrid among the top 3 most reliable compact SUVs.",cost:[{l:"Purchase price",v:"$32,400"},{l:"Fuel (5 yrs)",v:"$5,600"},{l:"Insurance (5 yrs)",v:"$7,200"},{l:"Maintenance",v:"$3,800"},{l:"Depreciation",v:"$9,900"}],costTotal:"$58,900",safetyBadges:["IIHS TSP+","5-Star NHTSA"],safetyFeatures:["Toyota Safety Sense 2.0 standard on all trims","Pre-collision system with pedestrian detection","Lane departure alert with steering assist","Radar cruise control"],specs:[{l:"Engine",v:"2.5L Hybrid"},{l:"Horsepower",v:"219 hp"},{l:"0-60 mph",v:"5.7 sec"},{l:"AWD",v:"Standard"},{l:"Cargo",v:"37.6 cu ft"},{l:"Seating",v:"5 passengers"},{l:"Wheelbase",v:"105.9 in"},{l:"Warranty",v:"3yr / 36k"}],slides:["#2a2a2a","#333","#3a3a3a","#222","#2d2d2d","#383838"]},
+  "Honda CR-V Hybrid":{cat:"Compact SUV",badge:"Runner up",year:"2022 to 2024",rel:"5.0/5",mpg:"38 mpg",tow:"1,500",saf:"TSP+",why:"The CR-V Hybrid offers the largest cargo space in its class and Honda Sensing on every trim.",relBars:[{l:"Overall",v:94},{l:"Engine",v:96},{l:"Transmission",v:95},{l:"Electronics",v:90}],relNote:"Honda CR-V Hybrid has an exceptional reliability record.",cost:[{l:"Purchase price",v:"$33,100"},{l:"Fuel (5 yrs)",v:"$5,600"},{l:"Insurance (5 yrs)",v:"$7,400"},{l:"Maintenance",v:"$3,900"},{l:"Depreciation",v:"$10,200"}],costTotal:"$60,200",safetyBadges:["IIHS TSP+","5-Star NHTSA"],safetyFeatures:["Honda Sensing suite standard all trims","Collision mitigation braking","Road departure mitigation","Adaptive cruise control"],specs:[{l:"Engine",v:"2.0L Hybrid"},{l:"Horsepower",v:"212 hp"},{l:"0-60 mph",v:"6.4 sec"},{l:"AWD",v:"Available"},{l:"Cargo",v:"39.5 cu ft"},{l:"Seating",v:"5 passengers"},{l:"Wheelbase",v:"104.7 in"},{l:"Warranty",v:"3yr / 36k"}],slides:["#2c2c2c","#343434","#3c3c3c","#252525","#2f2f2f","#3a3a3a"]}
+};
+function getVD(name){
+  if(VD[name])return VD[name];
+  var c=CARS.find(function(x){return x.n===name;})||{};
+  return{cat:"Compact SUV",badge:"Great fit",year:c.y||"2022 to 2024",rel:c.r||"4.0/5",mpg:c.m||"30 mpg",tow:(c.t||"2,000").replace(' lbs',''),saf:"TSP+",why:"This vehicle scores well across key priorities.",relBars:[{l:"Overall",v:78},{l:"Engine",v:82},{l:"Transmission",v:80},{l:"Electronics",v:72}],relNote:"Above-average reliability based on owner survey data.",cost:[{l:"Purchase price",v:"$31,000"},{l:"Fuel (5 yrs)",v:"$7,200"},{l:"Insurance (5 yrs)",v:"$7,000"},{l:"Maintenance",v:"$4,200"},{l:"Depreciation",v:"$10,500"}],costTotal:"$59,900",safetyBadges:["IIHS TSP+"],safetyFeatures:["Active safety suite standard","Automatic emergency braking","Lane departure warning","Blind spot monitoring"],specs:[{l:"Engine",v:"2.5L 4-cyl"},{l:"Horsepower",v:"200 hp"},{l:"AWD",v:"Available"},{l:"Cargo",v:"35.0 cu ft"},{l:"Seating",v:"5 passengers"},{l:"Warranty",v:"3yr / 36k"}],slides:["#2a2a2a","#333","#3a3a3a","#222","#2d2d2d"]};
+}
+var SLIDE_LABELS=["Front 3/4","Front","Side Profile","Rear 3/4","Rear","Interior"];
+function buildCarousel(slides){
+  var c=document.getElementById('carousel'),dots=document.getElementById('carDots');
+  c.innerHTML='';dots.innerHTML='';
+  (slides||["#2a2a2a","#333","#3a3a3a","#222","#2d2d2d"]).forEach(function(col,i){
+    var s=document.createElement('div');
+    s.style.cssText='width:320px;height:205px;flex-shrink:0;background:'+col+';display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:30px';
+    s.innerHTML='<div style="background:rgba(255,255,255,.11);border-radius:20px;padding:3px 11px;font-size:10px;color:rgba(255,255,255,.65);font-weight:500;font-family:var(--sans)">'+(SLIDE_LABELS[i]||'View '+(i+1))+'</div>';
+    c.appendChild(s);
+    var d=document.createElement('div');d.style.cssText='width:5px;height:5px;border-radius:50%;background:'+(i===0?'#fff':'rgba(255,255,255,.38)');
+    dots.appendChild(d);
+  });
+  detCarIdx=0;updateCarousel();
+}
+function updateCarousel(){document.getElementById('carousel').style.transform='translateX('+(-detCarIdx*320)+'px)';var dots=document.getElementById('carDots').children;for(var i=0;i<dots.length;i++)dots[i].style.background=i===detCarIdx?'#fff':'rgba(255,255,255,.38)';}
+function carNext(){var n=document.getElementById('carousel').children.length;detCarIdx=Math.min(detCarIdx+1,n-1);updateCarousel();}
+function carPrev(){detCarIdx=Math.max(detCarIdx-1,0);updateCarousel();}
+function goDetail(name,from){prevScr=from;buildDetail(name);nav(6);document.getElementById('detScroll').scrollTop=0;detCarIdx=0;updateCarousel();}
+
+function showDetToast(msg){
+  var t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.getElementById('track').appendChild(t);
+  setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove();},400);},2400);
+}
+
+function buildDetail(name){
+  var d=getVD(name);
+  buildCarousel(d.slides);
+  document.getElementById('detCat').textContent=d.cat;
+  document.getElementById('detName').textContent=name;
+  document.getElementById('detYear').textContent=d.year;
+  document.getElementById('detBadge').textContent=d.badge;
+  document.getElementById('detWhy').textContent=d.why;
+  document.getElementById('detRelNote').textContent=d.relNote;
+  document.getElementById('detCostTotal').textContent=d.costTotal;
+  var cta=document.getElementById('cta');
+  if(cta)cta.style.fontSize=prevScr===5?'11.5px':'13px';
+
+  var st=document.getElementById('detStats');st.innerHTML='';
+  [{k:'Reliability',v:d.rel},{k:'MPG',v:d.mpg},{k:'Towing',v:d.tow+'lbs'},{k:'Safety',v:d.saf}].forEach(function(s,i){
+    var el=document.createElement('div');
+    el.style.cssText='display:flex;flex-direction:column;align-items:center;padding:11px 4px;'+(i<3?'border-right:1px solid #f2f2f2;':'');
+    el.innerHTML='<div style="font-size:12.5px;font-weight:800;color:#1a1a1a;margin-bottom:2px;letter-spacing:-.01em">'+s.v+'</div><div style="font-size:11px;color:#bbb;text-transform:uppercase;letter-spacing:.06em;font-weight:500">'+s.k+'</div>';
+    st.appendChild(el);
+  });
+
+  var rb=document.getElementById('detRelBars');rb.innerHTML='';
+  d.relBars.forEach(function(b){
+    var row=document.createElement('div');row.style.marginBottom='9px';
+    row.innerHTML='<div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:#666;font-family:var(--sans)">'+b.l+'</span><span style="font-size:11px;font-weight:700;color:#1a1a1a;font-family:var(--sans)">'+b.v+'%</span></div><div class="rel-bar-track"><div class="rel-bar-fill" data-w="'+b.v+'%"></div></div>';
+    rb.appendChild(row);
+    setTimeout((function(r){return function(){var f=r.querySelector('.rel-bar-fill');if(f)f.style.width=f.dataset.w;};})(row),120);
+  });
+
+  var cr=document.getElementById('detCostRows');cr.innerHTML='';
+  d.cost.forEach(function(c){
+    var row=document.createElement('div');row.className='cost-row';
+    row.innerHTML='<span class="ck">'+c.l+'</span><span class="cv">'+c.v+'</span>';
+    cr.appendChild(row);
+  });
+
+  var sb=document.getElementById('detSafetyBadges');sb.innerHTML='';
+  d.safetyBadges.forEach(function(b){var el=document.createElement('span');el.className='safety-badge';el.textContent=b;sb.appendChild(el);});
+
+  var sf=document.getElementById('detSafetyFeatures');sf.innerHTML='';
+  d.safetyFeatures.forEach(function(f){
+    var el=document.createElement('div');
+    el.style.cssText='display:flex;align-items:flex-start;gap:7px;font-size:11.5px;color:#555;line-height:1.6;font-family:var(--sans)';
+    el.innerHTML='<span style="color:#1a1a1a;font-size:12px;flex-shrink:0;font-weight:700">✓</span>'+f;
+    sf.appendChild(el);
+  });
+
+  var sp=document.getElementById('detSpecs');sp.innerHTML='';
+  d.specs.forEach(function(s){
+    var el=document.createElement('div');el.className='spec-tile';
+    el.innerHTML='<div class="sl">'+s.l+'</div><div class="sv">'+s.v+'</div>';
+    sp.appendChild(el);
+  });
+
+  detSaved=false;
+  (function(){
+    var w=document.getElementById('detSaveWrap');
+    var i=document.getElementById('detSaveIcon');
+    var l=document.getElementById('detSaveLbl');
+    if(w)w.style.background='rgba(255,255,255,.92)';
+    if(i){i.setAttribute('fill','none');i.innerHTML='<path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';}
+    if(l){l.style.color='#1a1a1a';l.textContent='Save';}
+  })();
+}
+
+function toggleDetSave(){
+  detSaved=!detSaved;
+  var wrap=document.getElementById('detSaveWrap');var ico=document.getElementById('detSaveIcon');var lbl=document.getElementById('detSaveLbl');
+  if(detSaved){wrap.style.background='#1a1a1a';ico.setAttribute('fill','#fff');ico.innerHTML='<path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z"/>';lbl.style.color='#fff';lbl.textContent='Saved';}
+  else{wrap.style.background='rgba(255,255,255,.92)';ico.setAttribute('fill','none');ico.innerHTML='<path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';lbl.style.color='#1a1a1a';lbl.textContent='Save';}
+}
+
+// ── COMPARISON ────────────────────────────────────────────────────────────────
+var SD={
+  Reliability:{vals:{"Toyota RAV4 Hybrid":{v:"5.0/5",b:100,note:"Consumer Reports top"},"Honda CR-V Hybrid":{v:"5.0/5",b:100,note:"Consumer Reports top"},"Subaru Outback":{v:"4.0/5",b:78,note:"Above average"},"Mazda CX-5":{v:"4.0/5",b:78,note:"IIHS TSP+"},"Toyota Venza Hybrid":{v:"4.0/5",b:78,note:"Toyota hybrid proven"},"Hyundai Tucson Hybrid":{v:"3.5/5",b:65,note:"Improving"},"Subaru Forester":{v:"4.0/5",b:78,note:"Consistent"},"Kia Sportage Hybrid":{v:"3.5/5",b:65,note:"Shorter record"}}},
+  "Fuel economy":{vals:{"Toyota Venza Hybrid":{v:"40 mpg",b:100,note:"Best in group"},"Toyota RAV4 Hybrid":{v:"38 mpg",b:95,note:"Class-leading"},"Honda CR-V Hybrid":{v:"38 mpg",b:95,note:"Matches RAV4"},"Hyundai Tucson Hybrid":{v:"38 mpg",b:95,note:"Top picks"},"Kia Sportage Hybrid":{v:"38 mpg",b:95,note:"Best value MPG"},"Subaru Outback":{v:"30 mpg",b:72,note:"AWD penalty"},"Subaru Forester":{v:"30 mpg",b:72,note:"AWD penalty"},"Mazda CX-5":{v:"29 mpg",b:68,note:"No hybrid"}}},
+  Towing:{vals:{"Toyota RAV4 Hybrid":{v:"3,500 lbs",b:100,note:"Best in group"},"Subaru Outback":{v:"3,500 lbs",b:100,note:"Matches RAV4"},"Mazda CX-5":{v:"2,000 lbs",b:55,note:"Light duty"},"Hyundai Tucson Hybrid":{v:"2,000 lbs",b:55,note:"Light duty"},"Kia Sportage Hybrid":{v:"2,000 lbs",b:55,note:"Light duty"},"Honda CR-V Hybrid":{v:"1,500 lbs",b:40,note:"Minimal"},"Toyota Venza Hybrid":{v:"1,500 lbs",b:40,note:"Minimal"},"Subaru Forester":{v:"1,500 lbs",b:40,note:"Minimal"}}},
+  Safety:{vals:{"Toyota RAV4 Hybrid":{v:"TSP+",b:100,note:"Safety Sense 2.0"},"Honda CR-V Hybrid":{v:"TSP+",b:100,note:"Honda Sensing"},"Subaru Outback":{v:"TSP+",b:100,note:"EyeSight all trims"},"Subaru Forester":{v:"TSP+",b:100,note:"Best visibility"},"Mazda CX-5":{v:"TSP+",b:100,note:"i-Activsense"},"Toyota Venza Hybrid":{v:"TSP+",b:100,note:"Safety Sense 2.0"},"Hyundai Tucson Hybrid":{v:"TSP+",b:100,note:"SmartSense"},"Kia Sportage Hybrid":{v:"TSP+",b:100,note:"DriveWise"}}}
+};
+var curDim='Reliability';
+function buildCmp(){var names=Array.from(picked);document.getElementById('ctitle').textContent='Comparing '+names.length+' vehicle'+(names.length>1?'s':'');buildVerdicts(names);buildSpot(names,curDim);cmpShow('v');}
+function buildVerdicts(names){
+  var c=document.getElementById('cmpV');c.innerHTML='';
+  names.forEach(function(name,i){
+    var d=getVD(name);var iF=i===0;
+    var card=document.createElement('div');
+    card.style.cssText='border:1.5px solid #ebebeb;border-radius:13px;overflow:hidden;background:#fff';
+    card.innerHTML=
+      '<div style="padding:11px 11px 0">'+
+        '<div style="display:flex;justify-content:space-between;margin-bottom:4px">'+
+          '<span class="eyebrow">'+d.cat+'</span>'+
+          '<span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:'+(iF?'#1a1a1a':'#f0f0f0')+';color:'+(iF?'#fff':'#888')+'">'+(iF?'Top pick':d.badge)+'</span>'+
+        '</div>'+
+        '<div style="font-size:13.5px;font-weight:800;color:#1a1a1a;margin-bottom:1px;line-height:1.2;letter-spacing:-.01em">'+name+'</div>'+
+        '<div style="font-size:10px;color:#ccc;margin-bottom:9px;font-family:var(--sans)">'+d.year+'</div>'+
+        '<div style="font-size:11.5px;color:#666;line-height:1.65;margin-bottom:9px;font-family:var(--sans)">'+d.why+'</div>'+
+      '</div>'+
+      '<div style="display:flex;border-top:1px solid #f2f2f2">'+
+        '<div style="flex:1;padding:8px 0;text-align:center"><div style="font-size:10.5px;font-weight:800;color:#1a1a1a">'+d.rel+'</div><div style="font-size:11px;color:#ccc;margin-top:1px;text-transform:uppercase;letter-spacing:.05em">Reliability</div></div>'+
+        '<div style="flex:1;padding:8px 0;text-align:center;border-left:1px solid #f2f2f2"><div style="font-size:10.5px;font-weight:800;color:#1a1a1a">'+d.mpg+'</div><div style="font-size:11px;color:#ccc;margin-top:1px;text-transform:uppercase;letter-spacing:.05em">Economy</div></div>'+
+        '<div style="flex:1;padding:8px 0;text-align:center;border-left:1px solid #f2f2f2"><div style="font-size:10.5px;font-weight:800;color:#1a1a1a">'+d.tow+'</div><div style="font-size:11px;color:#ccc;margin-top:1px;text-transform:uppercase;letter-spacing:.05em">Towing</div></div>'+
+        '<div style="flex:1;padding:8px 0;text-align:center;border-left:1px solid #f2f2f2"><div style="font-size:10.5px;font-weight:800;color:#1a1a1a">'+d.saf+'</div><div style="font-size:11px;color:#ccc;margin-top:1px;text-transform:uppercase;letter-spacing:.05em">Safety</div></div>'+
+      '</div>'+
+      '<div style="padding:8px 11px 11px;border-top:1px solid #f7f7f7;display:flex;gap:6px">'+
+        '<button data-name="'+name+'" onclick="goDetail(this.dataset.name,4)" style="flex:1;padding:7px;background:#f7f7f7;color:#555;border:none;border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;font-family:var(--sans)">Full details</button>'+
+        '<button style="flex:1;padding:7px;background:'+(iF?'#1a1a1a':'#fff')+';color:'+(iF?'#fff':'#888')+';border:'+(iF?'none':'1.5px solid #e0e0e0')+';border-radius:8px;font-size:10px;font-weight:600;cursor:pointer;font-family:var(--sans)">'+(iF?'Saved':'Save')+'</button>'+
+      '</div>';
+    c.appendChild(card);
+  });
+}
+function buildSpot(names,dim){
+  var dd=SD[dim];if(!dd)return;
+  var rows=document.getElementById('spotrows');rows.innerHTML='';
+  var ranked=names.map(function(n){var v=dd.vals[n]||{v:'N/A',b:50,note:'No data'};return{n:n,v:v.v,b:v.b,note:v.note};}).sort(function(a,b){return b.b-a.b;});
+  ['1st','2nd','3rd','4th'].slice(0,ranked.length).forEach(function(lbl,i){
+    var v=ranked[i];
+    var r=document.createElement('div');
+    r.style.cssText='background:#fff;border:1.5px solid #ebebeb;border-radius:11px;padding:10px 11px;position:relative';
+    r.innerHTML=(i===0?'<span style="position:absolute;top:10px;right:10px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;background:#1a1a1a;color:#fff;letter-spacing:.02em">Winner</span>':'')+
+      '<div style="font-size:11px;font-weight:700;color:'+(i===0?'#1a1a1a':'#ccc')+';margin-bottom:2px;letter-spacing:.05em">'+lbl+'</div>'+
+      '<div style="font-size:11.5px;font-weight:700;color:#1a1a1a;margin-bottom:6px;line-height:1.2;font-family:var(--sans)">'+v.n+'</div>'+
+      '<div class="spot-bar-track"><div class="spot-bar-fill" style="background:'+(i===0?'#1a1a1a':'#d8d8d8')+'" data-w="'+v.b+'%"></div></div>'+
+      '<div style="display:flex;justify-content:space-between"><span style="font-size:10.5px;font-weight:800;color:#1a1a1a">'+v.v+'</span><span style="font-size:11px;color:#bbb;text-align:right;max-width:55%;font-family:var(--sans)">'+v.note+'</span></div>';
+    rows.appendChild(r);
+    setTimeout((function(row){return function(){var f=row.querySelector('[data-w]');if(f)f.style.width=f.dataset.w;};})(r),80+i*60);
+  });
+}
+function spotSet(el,dim){
+  curDim=dim;
+  document.querySelectorAll('.sdim').forEach(function(d){d.style.background='#fff';d.style.color='#888';d.style.borderColor='var(--grey-border)';});
+  el.style.background='#1a1a1a';el.style.color='#fff';el.style.borderColor='#1a1a1a';
+  buildSpot(Array.from(picked),dim);
+}
+function cmpShow(v){
+  var isV=v==='v';
+  document.getElementById('cmpV').style.display=isV?'flex':'none';
+  document.getElementById('cmpS').style.display=isV?'none':'block';
+  document.getElementById('ctabV').style.background=isV?'#1a1a1a':'#fff';document.getElementById('ctabV').style.color=isV?'#fff':'#aaa';
+  document.getElementById('ctabS').style.background=isV?'#fff':'#1a1a1a';document.getElementById('ctabS').style.color=isV?'#aaa':'#fff';
+}
+
+// ── SAVED ─────────────────────────────────────────────────────────────────────
+var SAVED_VEHICLES=[
+  {id:'sv1',name:'Toyota RAV4 Hybrid',year:'2022 – 2024',rel:'5.0/5',mpg:'38 mpg',saf:'TSP+'},
+  {id:'sv2',name:'Honda CR-V Hybrid',year:'2022 – 2024',rel:'5.0/5',mpg:'38 mpg',saf:'TSP+'}
+];
+var SAVED_SEARCHES=[
+  {id:'ss1',name:'Family SUV search',matches:14,pills:['Family hauler','5 people','Moderate cargo','Snow roads','$25k–$40k','Reliability','Hybrid']},
+  {id:'ss2',name:'Weekend adventure rig',matches:9,pills:['Outdoor adventure','2 people','Towing required','Off road','$40k–$60k','Performance','Gas only']}
+];
+var SAVED_LISTINGS=[
+  {id:'dl1',year:'2023',make:'Toyota',model:'RAV4 Hybrid',price:'$38,491',miles:'4,210 mi',condition:'Certified Pre-Owned',dealer:'Toyota of Santa Monica'},
+  {id:'dl2',year:'2024',make:'Honda',model:'CR-V Hybrid',price:'$41,200',miles:'1,100 mi',condition:'New',dealer:'Honda of Culver City'},
+  {id:'dl3',year:'2022',make:'Subaru',model:'Outback',price:'$31,750',miles:'22,800 mi',condition:'Used',dealer:'Subaru of Downtown LA'}
+];
+var delId=null,delType=null;
+
+function renderSaved(){
+  var list=document.getElementById('svList');if(!list)return;list.innerHTML='';
+  var total=SAVED_VEHICLES.length+SAVED_SEARCHES.length+SAVED_LISTINGS.length;
+  var sub=document.getElementById('svSubtitle');if(sub)sub.textContent=total+' item'+(total===1?'':'s')+' across all categories';
+
+  function mkSec(label){var d=document.createElement('div');d.className='sv-section-label';d.textContent=label;return d;}
+  function mkCard(){var d=document.createElement('div');d.style.cssText='background:#fff;border-radius:14px;overflow:hidden';return d;}
+  function mkDel(id,type){
+    var b=document.createElement('button');
+    b.style.cssText='position:absolute;top:0;right:-2px;width:22px;height:22px;border-radius:50%;background:#1a1a1a;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;padding:0';
+    b.innerHTML='<svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 1l6 6M7 1L1 7" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>';
+    b.onclick=function(e){e.stopPropagation();delId=id;delType=type;openOv('delOverlay');};
+    return b;
+  }
+
+  // Vehicles
+  list.appendChild(mkSec('Vehicles'));
+  SAVED_VEHICLES.forEach(function(v){
+    var wrap=document.createElement('div');
+    wrap.style.cssText='margin:0 12px 8px;position:relative;padding-top:8px';
+    var del=mkDel(v.id,'vehicle');
+    var card=mkCard();
+    var inner=document.createElement('div');
+    inner.style.cssText='display:flex;align-items:center;gap:11px;padding:11px 13px;cursor:pointer';
+    inner.onclick=function(){goDetail(v.name,1);};
+    inner.innerHTML=
+      '<div style="width:48px;height:48px;background:#1a1a1a;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+CAR_SVG+'</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:2px;font-family:var(--sans)">'+v.name+'</div>'+
+        '<div style="font-size:10.5px;color:#bbb;margin-bottom:5px;font-family:var(--sans)">'+v.year+'</div>'+
+        '<div style="display:flex;gap:7px">'+
+          '<span style="font-size:11px;font-weight:600;color:#555;background:#f5f5f5;padding:2px 7px;border-radius:6px">'+v.rel+'</span>'+
+          '<span style="font-size:11px;font-weight:600;color:#555;background:#f5f5f5;padding:2px 7px;border-radius:6px">'+v.mpg+'</span>'+
+          '<span style="font-size:11px;font-weight:600;color:#555;background:#f5f5f5;padding:2px 7px;border-radius:6px">'+v.saf+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<svg width="9" height="9" viewBox="0 0 24 24" fill="#ccc"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>';
+    card.appendChild(inner);
+    wrap.appendChild(del);
+    wrap.appendChild(card);
+    list.appendChild(wrap);
+  });
+
+  // Searches
+  list.appendChild(mkSec('Saved Searches'));
+  SAVED_SEARCHES.forEach(function(s){
+    var wrap=document.createElement('div');
+    wrap.style.cssText='margin:0 12px 8px;position:relative;padding-top:8px';
+    var del=mkDel(s.id,'search');
+    var card=mkCard();
+    var inner=document.createElement('div');
+    inner.style.cssText='padding:11px 13px;cursor:pointer';
+    inner.innerHTML=
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'+
+        '<div style="font-size:13px;font-weight:700;color:#1a1a1a;font-family:var(--sans)">'+s.name+'</div>'+
+        '<span style="font-size:11px;font-weight:600;color:#bbb;font-family:var(--sans)">'+s.matches+' matches</span>'+
+      '</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:4px">'+
+      s.pills.map(function(p){return '<span style="font-size:11px;font-weight:500;color:#555;background:#f5f5f5;padding:2px 7px;border-radius:6px;font-family:var(--sans)">'+p+'</span>';}).join('')+
+      '</div>';
+    inner.onclick=function(){nav(3);};
+    card.appendChild(inner);
+    wrap.appendChild(del);
+    wrap.appendChild(card);
+    list.appendChild(wrap);
+  });
+
+  // Listings
+  list.appendChild(mkSec('Saved Listings'));
+  SAVED_LISTINGS.forEach(function(dl){
+    var wrap=document.createElement('div');
+    wrap.style.cssText='margin:0 12px 8px;position:relative;padding-top:8px';
+    var del=mkDel(dl.id,'listing');
+    var card=mkCard();
+    var inner=document.createElement('div');
+    inner.style.cssText='display:flex;gap:11px;padding:11px 13px;cursor:pointer;align-items:center';
+    inner.innerHTML=
+      '<div style="width:52px;height:52px;background:#ebebeb;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center">'+
+        '<svg width="36" height="18" viewBox="0 0 56 28" fill="none" style="opacity:.35"><rect x="3" y="15" width="50" height="10" rx="2" fill="#1a1a1a"/><path d="M7 15C7 9 12 4 28 4S49 9 49 15" fill="#1a1a1a"/><circle cx="13" cy="25" r="4" fill="#1a1a1a"/><circle cx="43" cy="25" r="4" fill="#1a1a1a"/></svg>'+
+      '</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:12.5px;font-weight:700;color:#1a1a1a;margin-bottom:1px;font-family:var(--sans)">'+dl.year+' '+dl.make+' '+dl.model+'</div>'+
+        '<div style="font-size:13px;font-weight:800;color:#1a1a1a;margin-bottom:2px;letter-spacing:-.01em">'+dl.price+'</div>'+
+        '<div style="font-size:10px;color:#bbb;font-family:var(--sans)">'+dl.miles+' · '+dl.condition+'</div>'+
+        '<div style="font-size:11px;color:#bbb;margin-top:1px;font-family:var(--sans)">'+dl.dealer+'</div>'+
+      '</div>'+
+      '<svg width="9" height="9" viewBox="0 0 24 24" fill="#ccc"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>';
+    inner.onclick=function(){nav(10);};
+    card.appendChild(inner);
+    wrap.appendChild(del);
+    wrap.appendChild(card);
+    list.appendChild(wrap);
+  });
+
+  var spacer=document.createElement('div');spacer.style.height='8px';list.appendChild(spacer);
+}
+
+function confirmDel(){
+  if(delType==='vehicle')SAVED_VEHICLES=SAVED_VEHICLES.filter(function(x){return x.id!==delId;});
+  else if(delType==='search')SAVED_SEARCHES=SAVED_SEARCHES.filter(function(x){return x.id!==delId;});
+  else if(delType==='listing')SAVED_LISTINGS=SAVED_LISTINGS.filter(function(x){return x.id!==delId;});
+  closeOv('delOverlay');renderSaved();
+}
+
+// ── RESULTS SAVE TOGGLE ───────────────────────────────────────────────────────
+var rSaved=false;
+function toggleSave(){
+  rSaved=!rSaved;
+  var btn=document.getElementById('rsavebtn');var ico=document.getElementById('rsaveico');var lbl=document.getElementById('rsavelbl');
+  if(rSaved){btn.style.background='#1a1a1a';btn.style.borderColor='#1a1a1a';ico.setAttribute('fill','#fff');ico.innerHTML='<path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z"/>';lbl.style.color='#fff';lbl.textContent='Saved';}
+  else{btn.style.background='#fff';btn.style.borderColor='var(--grey-border)';ico.setAttribute('fill','none');ico.innerHTML='<path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';lbl.style.color='#1a1a1a';lbl.textContent='Save';}
+}
+function confirmSave(){
+  var name=document.getElementById('saveinp').value.trim();
+  if(!name)return;closeOv('saveOv');
+  SAVED_SEARCHES.push({id:'ss'+(Date.now()),name:name,matches:14,pills:STEPS.filter(function(_,i){return qs[i]!==null;}).map(function(s,i){return s.opts[qs[i]].t;})});
+  showDetToast('Search saved as "'+name+'"');
+}
+
+// ── FINDER ────────────────────────────────────────────────────────────────────
+var MAKES=['Toyota','Honda','Subaru','Mazda','Hyundai','Kia','Ford','Chevrolet','Nissan','Volkswagen'];
+var MODELS_MAP={Toyota:['RAV4','RAV4 Hybrid','Camry','Corolla','Venza Hybrid','4Runner'],Honda:['CR-V','CR-V Hybrid','Accord','Civic','Pilot','Ridgeline'],Subaru:['Outback','Forester','Impreza','Crosstrek','Legacy'],Mazda:['CX-5','CX-50','Mazda3','Mazda6','MX-5'],Hyundai:['Tucson','Tucson Hybrid','Santa Fe','Sonata','Elantra'],Kia:['Sportage','Sportage Hybrid','Telluride','Sorento','K5'],Ford:['F-150','Escape','Explorer','Bronco','Mustang'],Chevrolet:['Silverado','Equinox','Traverse','Tahoe','Colorado'],Nissan:['Rogue','Altima','Sentra','Murano','Frontier'],Volkswagen:['Tiguan','Atlas','Jetta','Golf','ID.4']};
+var YEARS=['2024','2023','2022','2021','2020','2019'];
+var fSel={make:null,model:null,year:null};
+var fOpen=null;
+
+// ── FINDER STATE MACHINE ──────────────────────────────────────────────────────
+// Strict sequential gate: make must be chosen before model opens,
+// model must be chosen before year opens. Selecting make resets model+year.
+// Selecting model resets year.
+
+function fIsUnlocked(key){
+  if(key==='make')return true;
+  if(key==='model')return !!fSel.make;
+  if(key==='year')return !!(fSel.make&&fSel.model);
+  return false;
+}
+
+function fgo(key){
+  if(!fIsUnlocked(key))return; // hard gate — ignore taps on locked steps
+  var isOpen=fOpen===key;
+  ['make','model','year'].forEach(function(k){
+    var cc=document.getElementById('fcc-'+k);
+    var ce=document.getElementById('fce-'+k);
+    var fc=document.getElementById('fc-'+k);
+    if(k===key&&!isOpen){
+      cc.style.display='none';ce.style.display='flex';fc.style.flex='2.5';
+      if(k==='make')buildFWrap('make',MAKES);
+      else if(k==='model')buildFWrap('model',MODELS_MAP[fSel.make]||[]);
+      else if(k==='year')buildFWrap('year',YEARS);
+      fOpen=key;
+    } else {
+      cc.style.display='flex';ce.style.display='none';fc.style.flex='1';
+    }
+  });
+  if(isOpen)fOpen=null;
+  syncFinderLockState();
+}
+
+function buildFWrap(key,items){
+  var w=document.getElementById('fwrap-'+key);if(!w)return;w.innerHTML='';
+  items.forEach(function(item){
+    var btn=document.createElement('button');
+    var sel=fSel[key]===item;
+    btn.style.cssText='padding:6px 13px;border-radius:20px;font-size:11px;font-weight:600;border:'+(sel?'1.5px solid #1a1a1a':'1.5px solid #d8d8d8')+';background:'+(sel?'#1a1a1a':'#fff')+';color:'+(sel?'#fff':'#555')+';cursor:pointer;font-family:var(--sans);white-space:nowrap;transition:all .12s';
+    btn.textContent=item;
+    btn.onclick=function(){
+      fSel[key]=item;
+      if(key==='make'){fSel.model=null;fSel.year=null;}
+      if(key==='model'){fSel.year=null;}
+      buildFWrap(key,items);
+      updateFinderLabels();
+      updateFinderCta();
+      syncFinderLockState();
+    };
+    w.appendChild(btn);
+  });
+}
+
+function syncFinderLockState(){
+  var STEPS_F=['make','model','year'];
+  STEPS_F.forEach(function(k){
+    var fc=document.getElementById('fc-'+k);
+    var cc=document.getElementById('fcc-'+k);
+    var lbl=document.getElementById('flbl-'+k);
+    var unlocked=fIsUnlocked(k);
+    if(fc){
+      fc.style.opacity=unlocked?'1':'0.38';
+      fc.style.pointerEvents=unlocked?'auto':'none';
+    }
+    // Show a "locked" hint on label when step is locked and empty
+    if(lbl&&!fSel[k]){
+      var hint=k==='model'?'Select make first':k==='year'?'Select model first':'';
+      if(!unlocked&&hint){
+        lbl.style.fontSize='16px';
+        lbl.style.color='#bbb';
+        lbl.textContent=hint;
+      } else {
+        lbl.style.fontSize='';
+        lbl.style.color='';
+        lbl.textContent=k.charAt(0).toUpperCase()+k.slice(1);
+      }
+    }
+  });
+}
+
+function fdone(e,key){e.stopPropagation();fgo(key);}
+
+function updateFinderLabels(){
+  ['make','model','year'].forEach(function(k){
+    var lbl=document.getElementById('flbl-'+k);
+    if(!lbl)return;
+    if(fSel[k]){
+      lbl.style.fontSize='';lbl.style.color='';
+      lbl.textContent=fSel[k];
+    } else {
+      syncFinderLockState();
+    }
+  });
+}
+
+function updateFinderCta(){
+  var btn=document.getElementById('fcta');if(!btn)return;
+  if(fSel.make&&fSel.model){
+    btn.disabled=false;btn.classList.remove('dim-btn');
+    btn.style.background='#1a1a1a';btn.style.color='#fff';btn.style.cursor='pointer';
+    btn.textContent=fSel.year?'Search '+fSel.year+' '+fSel.make+' '+fSel.model:'Search '+fSel.make+' '+fSel.model+' — all years';
+  } else {
+    btn.disabled=true;btn.classList.add('dim-btn');
+    btn.style.background='#ebebeb';btn.style.color='#ccc';btn.style.cursor='default';
+    btn.textContent=fSel.make?'Select a model':'Select a make first';
+  }
+}
+
+function finderSearch(){if(fSel.make&&fSel.model){prevScr=5;buildVoiceGrid();nav(10);}}
+
+// Init lock state on load
+syncFinderLockState();
+
+// ── VOICE ─────────────────────────────────────────────────────────────────────
+var vsi=0,vtn=null;
+var VS=[
+  {u:"I need a reliable SUV for my family, under $40k",a:"I can help with that. A few quick questions — how many people do you regularly carry?"},
+  {u:"Usually 5 people — two adults and three kids.",a:"Got it. Any preference on fuel type? The Toyota RAV4 Hybrid and Honda CR-V Hybrid both excel for families."},
+  {u:"Hybrid sounds good. We also get some snow in winter.",a:"In that case, both the RAV4 Hybrid and CR-V Hybrid have standard or available AWD. I've found 8 great matches for you."}
+];
+
+function setVML(m){var el=document.getElementById('vml');if(el)el.textContent=m;}
+function startVPulse(){var vr1=document.getElementById('vr1');var vr2=document.getElementById('vr2');if(vr1){vr1.className='vrr1';vr1.style.position='absolute';vr1.style.width='52px';vr1.style.height='52px';vr1.style.borderRadius='50%';vr1.style.background='#1a1a1a';}if(vr2){vr2.className='vrr2';vr2.style.position='absolute';vr2.style.width='68px';vr2.style.height='68px';vr2.style.borderRadius='50%';vr2.style.background='#1a1a1a';}}
+function stopVPulse(){var vr1=document.getElementById('vr1');var vr2=document.getElementById('vr2');if(vr1)vr1.className='';if(vr2)vr2.className='';}
+
+function appendVBubble(txt,role){
+  var vtr=document.getElementById('vtr');if(!vtr)return;
+  var b=document.createElement('div');
+  b.className='vbubble '+role;b.textContent=txt;
+  vtr.appendChild(b);
+  vtr.scrollTop=vtr.scrollHeight;
+}
+
+function startVoice(){nav(8);setVML('Listening...');startVPulse();vsi=0;vtn=null;var vtr=document.getElementById('vtr');if(vtr)vtr.innerHTML='';advanceVoice();}
+
+function advanceVoice(){
+  if(vsi>=VS.length){stopVPulse();setVML('Done');setTimeout(function(){buildVoiceGrid();nav(9);},900);return;}
+  var step=VS[vsi];
+  stopVPulse();setVML('Listening...');
+  setTimeout(function(){
+    appendVBubble(step.u,'user');
+    setVML('Processing…');
+    setTimeout(function(){
+      appendVBubble(step.a,'ai');
+      vsi++;
+      if(vsi<VS.length){startVPulse();setVML('Listening...');vtn=setTimeout(advanceVoice,2600);}
+      else{stopVPulse();setVML('Showing results...');setTimeout(function(){buildVoiceGrid();nav(9);},1000);}
+    },900);
+  },1800);
+}
+
+function buildVoiceGrid(){
+  var g=document.getElementById('vrgrid');if(!g)return;g.innerHTML='';
+  CARS.slice(0,4).forEach(function(c){
+    var el=document.createElement('div');
+    el.className='vcard';
+    el.innerHTML=
+      '<div style="width:100%;aspect-ratio:1/1;background:#ebebeb;margin-bottom:6px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center">'+
+        '<svg width="42" height="21" viewBox="0 0 56 28" fill="none" style="opacity:.35"><rect x="3" y="15" width="50" height="10" rx="2" fill="#1a1a1a"/><path d="M7 15C7 9 12 4 28 4S49 9 49 15" fill="#1a1a1a"/><circle cx="13" cy="25" r="4" fill="#1a1a1a"/><circle cx="43" cy="25" r="4" fill="#1a1a1a"/></svg>'+
+      '</div>'+
+      '<div style="padding:0 4px 5px">'+
+        '<div style="font-size:10px;font-weight:700;color:#1a1a1a;line-height:1.25;margin-bottom:1px">'+c.n+'</div>'+
+        '<div style="font-size:11px;font-weight:700;color:#1a1a1a;margin-bottom:5px">$31k–$42k</div>'+
+        '<div style="margin-top:4px;padding-top:5px;border-top:1px solid #f5f5f5">'+
+          '<button style="width:100%;padding:5px 0;background:none;border:1.5px solid #e8e8e8;border-radius:7px;font-size:11px;font-weight:600;color:#777;cursor:pointer;font-family:var(--sans)">View listing</button>'+
+        '</div>'+
+      '</div>';
+    g.appendChild(el);
+  });
+}
+
+function resetVoice(){
+  var t=document.getElementById('vtr');if(t)t.innerHTML='';
+  if(vtn)clearTimeout(vtn);
+  setVML('Listening...');startVPulse();vsi=0;vtn=null;nav(7);
+}
+
+// Inject back arrows for voice screens
+(function(){['bb7','bb8','bb9','bb10'].forEach(function(id){var el=document.getElementById(id);if(el&&!el.innerHTML)el.innerHTML=ARR;});})();
+
+// ── INVENTORY ─────────────────────────────────────────────────────────────────
+var INV_CARS=[
+  {year:'2023',make:'Toyota',model:'RAV4 Hybrid',price:'$38,491',miles:'4,210'},
+  {year:'2022',make:'Toyota',model:'RAV4 Hybrid',price:'$35,990',miles:'18,440'},
+  {year:'2024',make:'Honda',model:'CR-V Hybrid',price:'$41,200',miles:'1,100'},
+  {year:'2023',make:'Honda',model:'CR-V Hybrid',price:'$37,850',miles:'9,300'},
+  {year:'2022',make:'Subaru',model:'Outback',price:'$31,750',miles:'22,800'},
+  {year:'2023',make:'Mazda',model:'CX-5',price:'$33,400',miles:'11,600'},
+  {year:'2024',make:'Toyota',model:'Venza Hybrid',price:'$43,100',miles:'2,050'},
+  {year:'2022',make:'Hyundai',model:'Tucson Hybrid',price:'$30,990',miles:'25,700'},
+  {year:'2023',make:'Subaru',model:'Forester',price:'$29,800',miles:'14,200'},
+  {year:'2022',make:'Kia',model:'Sportage Hybrid',price:'$28,500',miles:'31,400'},
+  {year:'2024',make:'Honda',model:'CR-V Hybrid',price:'$40,750',miles:'880'},
+  {year:'2023',make:'Toyota',model:'RAV4 Hybrid',price:'$36,900',miles:'7,650'},
+  {year:'2022',make:'Mazda',model:'CX-5',price:'$29,400',miles:'28,900'},
+  {year:'2023',make:'Subaru',model:'Outback',price:'$33,100',miles:'16,300'},
+  {year:'2024',make:'Hyundai',model:'Tucson Hybrid',price:'$38,200',miles:'500'}
+];
+
+function buildInventory(){
+  var g=document.getElementById('invgrid');if(!g)return;g.innerHTML='';
+  INV_CARS.forEach(function(c){
+    var el=document.createElement('div');
+    el.className='inv-card';
+    el.innerHTML=
+      '<div style="width:100%;aspect-ratio:1/1;background:#ebebeb;display:flex;align-items:center;justify-content:center">'+
+        '<svg width="44" height="22" viewBox="0 0 56 28" fill="none" style="opacity:.3"><rect x="3" y="15" width="50" height="10" rx="2" fill="#1a1a1a"/><path d="M7 15C7 9 12 4 28 4S49 9 49 15" fill="#1a1a1a"/><circle cx="13" cy="25" r="4" fill="#1a1a1a"/><circle cx="43" cy="25" r="4" fill="#1a1a1a"/></svg>'+
+      '</div>'+
+      '<div style="padding:7px 8px 8px">'+
+        '<div style="font-size:10.5px;font-weight:700;color:#1a1a1a;line-height:1.3;margin-bottom:1px">'+c.year+' '+c.make+'<br>'+c.model+'</div>'+
+        '<div style="font-size:12px;font-weight:800;color:#1a1a1a;margin-bottom:2px;letter-spacing:-.01em">'+c.price+'</div>'+
+        '<div style="font-size:11px;color:#bbb;margin-bottom:6px;font-family:var(--sans)">'+Number(c.miles).toLocaleString()+' mi</div>'+
+        '<div style="padding-top:5px;border-top:1px solid #f5f5f5">'+
+          '<button onclick="prevScr=10;nav(11)" style="width:100%;padding:6px 0;background:none;border:1.5px solid #e8e8e8;border-radius:7px;font-size:11px;font-weight:600;color:#777;cursor:pointer;font-family:var(--sans)">View listing</button>'+
+        '</div>'+
+      '</div>';
+    g.appendChild(el);
+  });
+}
+
+// ── S11 CAROUSEL ──────────────────────────────────────────────────────────────
+var S11_SLIDES=[
+  {bg:'#2a2a2a',label:'Front 3/4'},
+  {bg:'#333',label:'Front'},
+  {bg:'#3a3a3a',label:'Side Profile'},
+  {bg:'#232323',label:'Rear 3/4'},
+  {bg:'#2d2d2d',label:'Rear'},
+  {bg:'#383838',label:'Interior'}
+];
+var s11CarIdx=0,s11SavedState=false;
+
+function s11Init(){
+  s11CarIdx=0;
+  var track=document.getElementById('s11Track');
+  var dots=document.getElementById('s11Dots');
+  if(!track||track.children.length)return; // already built
+  S11_SLIDES.forEach(function(s,i){
+    var slide=document.createElement('div');
+    slide.style.cssText='width:320px;height:190px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:24px;background:'+s.bg;
+    slide.innerHTML='<div style="background:rgba(255,255,255,.11);border-radius:20px;padding:3px 10px;font-size:11px;color:rgba(255,255,255,.65);font-weight:500">'+s.label+'</div>';
+    track.appendChild(slide);
+    var dot=document.createElement('div');
+    dot.style.cssText='width:5px;height:5px;border-radius:50%;background:'+(i===0?'#fff':'rgba(255,255,255,.38)');
+    dots.appendChild(dot);
+  });
+  s11UpdateCar();
+}
+
+function s11UpdateCar(){
+  var track=document.getElementById('s11Track');
+  if(track)track.style.transform='translateX('+(-s11CarIdx*320)+'px)';
+  var dots=document.getElementById('s11Dots');
+  if(dots){for(var i=0;i<dots.children.length;i++)dots.children[i].style.background=i===s11CarIdx?'#fff':'rgba(255,255,255,.38)';}
+}
+function s11CarNext(){if(s11CarIdx<S11_SLIDES.length-1){s11CarIdx++;s11UpdateCar();}}
+function s11CarPrev(){if(s11CarIdx>0){s11CarIdx--;s11UpdateCar();}}
+
+function s11ToggleSave(){
+  s11SavedState=!s11SavedState;
+  var btn=document.getElementById('s11SaveBtn');
+  var ico=document.getElementById('s11SaveIco');
+  var lbl=document.getElementById('s11SaveLbl');
+  if(s11SavedState){btn.style.background='#1a1a1a';ico.setAttribute('fill','#fff');ico.innerHTML='<path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z"/>';lbl.style.color='#fff';lbl.textContent='Saved';}
+  else{btn.style.background='rgba(255,255,255,.9)';ico.setAttribute('fill','none');ico.innerHTML='<path d="M5 3h14a1 1 0 0 1 1 1v16.5l-7-4.5-7 4.5V4a1 1 0 0 1 1-1z" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';lbl.style.color='#1a1a1a';lbl.textContent='Save';}
+}
+
+// ── S11 INQUIRY WIZARD ────────────────────────────────────────────────────────
+var s11ws={step:1,timeline:null,financing:null,tradeIn:null,tradeYear:'',tradeMake:'',tradeModel:'',tradeMiles:'',tradeVIN:''};
+var S11_TL=[{val:'30',label:'Ready within 30 days',sub:"Actively looking, ready to move quickly"},{val:'60',label:'Ready within 60 days',sub:"Seriously comparing options"},{val:'90',label:'Ready within 90 days',sub:"Early research phase, not in a rush"}];
+var S11_FI=[{val:'dealer',label:'Finance through dealer',sub:"I'll arrange financing at the dealership"},{val:'cash',label:'Pay cash',sub:"No financing needed"},{val:'preapproved',label:'Already pre-approved',sub:"I have financing from my bank"}];
+
+function s11OpenSheet(){
+  s11ws={step:1,timeline:null,financing:null,tradeIn:null,tradeYear:'',tradeMake:'',tradeModel:'',tradeMiles:'',tradeVIN:''};
+  s11RenderStep();
+  var scrim=document.getElementById('s11Scrim');
+  scrim.style.pointerEvents='all';
+  scrim.style.background='rgba(0,0,0,.42)';
+  setTimeout(function(){document.getElementById('s11Sheet').style.transform='translateY(0)';},10);
+}
+
+function s11CloseSheet(){
+  document.getElementById('s11Sheet').style.transform='translateY(100%)';
+  var scrim=document.getElementById('s11Scrim');
+  scrim.style.background='rgba(0,0,0,0)';
+  setTimeout(function(){scrim.style.pointerEvents='none';},380);
+}
+
+function s11RenderProg(){
+  var p=document.getElementById('s11Prog');p.innerHTML='';
+  for(var i=1;i<=3;i++){
+    var d=document.createElement('div');
+    d.style.cssText='width:6px;height:6px;border-radius:50%;transition:background .22s,transform .22s;background:'+(i<s11ws.step?'#1a1a1a':i===s11ws.step?'#1a1a1a':'#e0e0e0')+';transform:'+(i===s11ws.step?'scale(1.3)':'scale(1)');
+    p.appendChild(d);
+  }
+  document.getElementById('s11ProgLbl').textContent='Step '+s11ws.step+' of 3';
+}
+
+function s11CR(o,val,stateKey,fnName){
+  var sel=s11ws[stateKey]===val;
+  return '<div class="opt-row'+(sel?' sel':'')+'" onclick="'+fnName+'(\''+val+'\')" style="margin-bottom:7px;border-radius:11px;padding:10px 12px">'+
+    '<div><div class="ot">'+o.label+'</div><div class="os">'+o.sub+'</div></div>'+
+    '<div class="opt-check">'+(sel?CHECK_WHITE:'')+'</div>'+
+  '</div>';
+}
+
+function s11RenderStep(){
+  s11RenderProg();
+  var body=document.getElementById('s11Body');
+  var footer=document.getElementById('s11Footer');
+  body.innerHTML='';footer.innerHTML='';
+  body.scrollTop=0;
+  if(s11ws.step===1){
+    body.innerHTML='<div style="padding-top:13px">'+
+      '<div style="font-family:var(--serif);font-weight:800;font-size:17px;color:#1a1a1a;line-height:1.2;margin-bottom:3px">When are you looking to buy?</div>'+
+      '<div style="font-size:11px;color:#bbb;margin-bottom:13px;line-height:1.55">This lets the dealer know how soon you\'re ready to move.</div>'+
+      S11_TL.map(function(o){return s11CR(o,o.val,'timeline','s11SelTL');}).join('')+
+      '<div style="height:12px"></div>'+
+      '<div style="font-family:var(--serif);font-weight:800;font-size:17px;color:#1a1a1a;line-height:1.2;margin-bottom:3px">How will you pay?</div>'+
+      '<div style="font-size:11px;color:#bbb;margin-bottom:13px;line-height:1.55">The agent will include this — it matters to dealers.</div>'+
+      S11_FI.map(function(o){return s11CR(o,o.val,'financing','s11SelFI');}).join('')+
+      '<div style="height:14px"></div></div>';
+    var ok=s11ws.timeline&&s11ws.financing;
+    footer.innerHTML='<button onclick="s11GoStep(2)" style="width:100%;padding:12px;background:'+(ok?'#1a1a1a':'#ebebeb')+';color:'+(ok?'#fff':'#bbb')+';border:none;border-radius:11px;font-size:13px;font-weight:600;cursor:'+(ok?'pointer':'default')+';font-family:var(--sans)"'+(ok?'':' disabled')+'>Continue</button>';
+  } else if(s11ws.step===2){
+    var hasY=s11ws.tradeIn==='yes',hasN=s11ws.tradeIn==='no';
+    var fields='';
+    if(hasY){
+      fields='<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px">'+
+        s11Field('tradeYear','Year','e.g. 2019','text',4)+
+        s11Field('tradeMake','Make','e.g. Honda','text',0)+
+        s11Field('tradeModel','Model','e.g. Accord','text',0)+
+        s11Field('tradeMiles','Mileage','e.g. 44,000','text',0)+
+      '</div>'+
+      '<div style="margin-top:7px">'+s11Field('tradeVIN','VIN — Required','17-character VIN','text',17,true)+'</div>';
+    }
+    body.innerHTML='<div style="padding-top:13px">'+
+      '<div style="font-family:var(--serif);font-weight:800;font-size:17px;color:#1a1a1a;line-height:1.2;margin-bottom:3px">Do you have a trade-in?</div>'+
+      '<div style="font-size:11px;color:#bbb;margin-bottom:13px;line-height:1.55">Your trade-in details are included in the anonymous inquiry so the dealer can provide an accurate offer.</div>'+
+      s11CR({label:'Yes, I have a trade-in',sub:"I'll provide the vehicle details"},'yes','tradeIn','s11SelTrade')+
+      s11CR({label:'No trade-in',sub:"I'm buying without a trade"},'no','tradeIn','s11SelTrade')+
+      fields+
+      '<div style="height:14px"></div></div>';
+    var canGo=hasN||(hasY&&s11TradeOk());
+    footer.innerHTML=
+      '<button id="s11Step2Cta" onclick="s11GoStep(3)" style="width:100%;padding:12px;background:'+(canGo?'#1a1a1a':'#ebebeb')+';color:'+(canGo?'#fff':'#bbb')+';border:none;border-radius:11px;font-size:13px;font-weight:600;cursor:'+(canGo?'pointer':'default')+';font-family:var(--sans)"'+(canGo?'':' disabled')+'>Continue</button>'+
+      '<button onclick="s11GoStep(1)" style="background:none;border:none;cursor:pointer;font-size:11px;font-weight:500;color:#bbb;font-family:var(--sans);padding:8px 0 0;width:100%;text-align:center">← Back</button>';
+    if(hasY){
+      ['tradeYear','tradeMake','tradeModel','tradeMiles','tradeVIN'].forEach(function(id){
+        var el=document.getElementById('s11_'+id);
+        if(el){el.value=s11ws[id];el.addEventListener('input',function(){s11ws[id]=this.value;var ok2=s11TradeOk();var c=document.getElementById('s11Step2Cta');if(c){c.disabled=!ok2;c.style.background=ok2?'#1a1a1a':'#ebebeb';c.style.color=ok2?'#fff':'#bbb';c.style.cursor=ok2?'pointer':'default';}});}
+      });
+    }
+  } else {
+    var tlLabel=(S11_TL.find(function(o){return o.val===s11ws.timeline;})||{}).label||'';
+    var fiLabel=(S11_FI.find(function(o){return o.val===s11ws.financing;})||{}).label||'';
+    var trHTML=s11ws.tradeIn==='yes'
+      ?s11RevBlock('Trade-in vehicle',[['Year',s11ws.tradeYear],['Make',s11ws.tradeMake],['Model',s11ws.tradeModel],['Mileage',s11ws.tradeMiles],['VIN','<span style="font-family:monospace;font-size:11px;letter-spacing:.04em">'+s11ws.tradeVIN+'</span>']])
+      :s11RevBlock('Trade-in',[['Trade-in','None']]);
+    body.innerHTML='<div style="padding-top:13px">'+
+      '<div style="font-family:var(--serif);font-weight:800;font-size:17px;color:#1a1a1a;line-height:1.2;margin-bottom:3px">Review before sending</div>'+
+      '<div style="font-size:11px;color:#bbb;margin-bottom:13px;line-height:1.55">The agent will send this on your behalf. Your name and contact information will not be included.</div>'+
+      s11RevBlock('Vehicle of interest',[['Vehicle','2025 Toyota RAV4 Hybrid'],['VIN','<span style="font-family:monospace;font-size:11px">4T3R6RFV5RU010042</span>'],['Listed price','$41,850']])+
+      s11RevBlock('Purchase details',[['Timeline',tlLabel],['Financing',fiLabel]])+
+      trHTML+
+      '<div style="font-size:11px;color:#bbb;line-height:1.6;margin-top:8px;padding-bottom:2px">This inquiry will be sent by <strong>Automatic Agent</strong>, a disclosed intermediary, on behalf of a verified buyer. Your identity is protected until you choose to reveal it.</div>'+
+      '<div style="height:14px"></div></div>';
+    footer.innerHTML=
+      '<button onclick="s11Send()" style="width:100%;padding:12px;background:#1a1a1a;color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans)">Send inquiry</button>'+
+      '<button onclick="s11GoStep(2)" style="background:none;border:none;cursor:pointer;font-size:11px;font-weight:500;color:#bbb;font-family:var(--sans);padding:8px 0 0;width:100%;text-align:center">← Back</button>';
+  }
+}
+
+function s11Field(key,label,ph,type,max,full){
+  var id='s11_'+key;
+  return '<div style="display:flex;flex-direction:column;gap:4px'+(full?';grid-column:1/-1':'')+'">'
+    +'<div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#bbb">'+label+'</div>'
+    +'<input id="'+id+'" type="'+type+'" placeholder="'+ph+'"'+(max?' maxlength="'+max+'"':'')+' style="padding:8px 10px;border:1.5px solid #e8e8e8;border-radius:9px;font-size:12px;color:#1a1a1a;font-family:var(--sans);background:#fff;outline:none;width:100%">'
+    +'</div>';
+}
+
+function s11RevBlock(label,rows){
+  return '<div style="background:#f7f7f7;border-radius:11px;padding:11px 13px;margin-bottom:7px">'
+    +'<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#bbb;margin-bottom:7px">'+label+'</div>'
+    +rows.map(function(r){return '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:4px 0;border-top:1px solid #ebebeb"><span style="font-size:11px;color:#777">'+r[0]+'</span><span style="font-size:11px;font-weight:600;color:#1a1a1a;text-align:right;max-width:55%">'+r[1]+'</span></div>';}).join('')
+    +'</div>';
+}
+
+function s11SelTL(val){s11ws.timeline=val;s11RenderStep();}
+function s11SelFI(val){s11ws.financing=val;s11RenderStep();}
+function s11SelTrade(val){s11SaveTradeFields();s11ws.tradeIn=val;s11RenderStep();}
+// Init active footer tab
+syncFooterActive(0);
+
+function s11SaveTradeFields(){
+  ['tradeYear','tradeMake','tradeModel','tradeMiles','tradeVIN'].forEach(function(k){
+    var el=document.getElementById('s11_'+k);if(el)s11ws[k]=el.value;
+  });
+}
+
+function s11TradeOk(){
+  return s11ws.tradeYear.trim()&&s11ws.tradeMake.trim()&&s11ws.tradeModel.trim()&&s11ws.tradeMiles.trim()&&s11ws.tradeVIN.trim().length>=17;
+}
+
+function s11GoStep(n){
+  if(s11ws.step===2)s11SaveTradeFields();
+  s11ws.step=n;
+  s11RenderStep();
+}
+
+function s11Send(){
+  s11CloseSheet();
+  var btn=document.getElementById('s11CtaBtn');
+  if(btn){btn.textContent='Inquiry sent ✓';btn.style.opacity='.55';btn.style.cursor='default';btn.onclick=null;}
+}
+
+</script>
+</body>
+</html>
